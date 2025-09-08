@@ -47,6 +47,16 @@ export default {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
+        girl: {
+          DEFAULT: "hsl(var(--girl-primary))",
+          secondary: "hsl(var(--girl-secondary))",
+          accent: "hsl(var(--girl-accent))",
+        },
+        boy: {
+          DEFAULT: "hsl(var(--boy-primary))",
+          secondary: "hsl(var(--boy-secondary))",
+          accent: "hsl(var(--boy-accent))",
+        },
         sidebar: {
           DEFAULT: "hsl(var(--sidebar-background))",
           foreground: "hsl(var(--sidebar-foreground))",

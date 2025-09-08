@@ -8,35 +8,61 @@ All colors MUST be HSL.
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
+    --background: 250 100% 98%;
+    --foreground: 220 15% 25%;
 
     --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
+    --card-foreground: 220 15% 25%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
+    --popover-foreground: 220 15% 25%;
 
-    --primary: 222.2 47.4% 11.2%;
-    --primary-foreground: 210 40% 98%;
+    --primary: 280 65% 60%;
+    --primary-foreground: 0 0% 100%;
 
     --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
+    --secondary-foreground: 220 15% 25%;
 
     --muted: 210 40% 96.1%;
     --muted-foreground: 215.4 16.3% 46.9%;
 
     --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
+    --accent-foreground: 220 15% 25%;
 
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 210 40% 98%;
 
     --border: 214.3 31.8% 91.4%;
     --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
+    --ring: 280 65% 60%;
 
-    --radius: 0.5rem;
+    --radius: 1rem;
+
+    /* Gender voting colors */
+    --girl-primary: 330 81% 60%;
+    --girl-secondary: 340 100% 88%;
+    --girl-accent: 350 100% 95%;
+    
+    --boy-primary: 210 100% 56%;
+    --boy-secondary: 210 100% 85%;
+    --boy-accent: 210 100% 95%;
+
+    /* Gradients */
+    --gradient-girl: linear-gradient(135deg, hsl(var(--girl-primary)), hsl(var(--girl-secondary)));
+    --gradient-boy: linear-gradient(135deg, hsl(var(--boy-primary)), hsl(var(--boy-secondary)));
+    --gradient-split: linear-gradient(90deg, hsl(var(--girl-secondary)) 0%, hsl(var(--girl-secondary)) 50%, hsl(var(--boy-secondary)) 50%, hsl(var(--boy-secondary)) 100%);
+
+    /* Shadows and effects */
+    --shadow-girl: 0 10px 40px -10px hsl(var(--girl-primary) / 0.3);
+    --shadow-boy: 0 10px 40px -10px hsl(var(--boy-primary) / 0.3);
+    --glow-girl: 0 0 30px hsl(var(--girl-primary) / 0.5);
+    --glow-boy: 0 0 30px hsl(var(--boy-primary) / 0.5);
+
+    /* Animations */
+    --transition-smooth: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-bounce: all 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+
+    --radius: 1rem;
 
     --sidebar-background: 0 0% 98%;
 
