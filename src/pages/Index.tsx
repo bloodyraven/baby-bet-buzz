@@ -2,7 +2,8 @@ import { useState } from "react";
 import { VoteForm } from "@/components/VoteForm";
 import { VotesList } from "@/components/VotesList";
 import { VoteStats } from "@/components/VoteStats";
-import { Baby, Heart } from "lucide-react";
+import { Baby, Heart, Eye, EyeOff } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 export interface Vote {
   id: string;
@@ -13,6 +14,8 @@ export interface Vote {
 
 const Index = () => {
   const [votes, setVotes] = useState<Vote[]>([]);
+  const [hasVoted, setHasVoted] = useState(false);
+  const [showResults, setShowResults] = useState(false);
 
   const handleVote = (name: string, gender: "girl" | "boy") => {
     const newVote: Vote = {
@@ -22,6 +25,8 @@ const Index = () => {
       timestamp: new Date(),
     };
     setVotes(prev => [...prev, newVote]);
+    setHasVoted(true);
+    setShowResults(true);
   };
 
   const girlVotes = votes.filter(vote => vote.gender === "girl");
@@ -48,33 +53,79 @@ const Index = () => {
         <VoteForm onVote={handleVote} />
       </div>
 
-      {/* Stats */}
-      <div className="max-w-6xl mx-auto px-4 mb-12">
-        <VoteStats girlVotes={girlVotes.length} boyVotes={boyVotes.length} />
-      </div>
-
-      {/* Votes Display */}
-      <div className="max-w-7xl mx-auto px-4 pb-12">
-        <div className="grid md:grid-cols-2 gap-8">
-          {/* Girls Section */}
-          <div className="bg-gradient-to-br from-girl-accent to-girl-secondary/50 rounded-3xl p-6 border border-girl-secondary/20 backdrop-blur-sm">
-            <div className="text-center mb-6">
-              <h2 className="text-3xl font-bold text-girl mb-2">👧 Fille</h2>
-              <p className="text-girl/80 font-medium">{girlVotes.length} vote{girlVotes.length !== 1 ? 's' : ''}</p>
-            </div>
-            <VotesList votes={girlVotes} gender="girl" />
+      {/* Results Section */}
+      {showResults ? (
+        <>
+          {/* Stats */}
+          <div className="max-w-6xl mx-auto px-4 mb-12">
+            <VoteStats girlVotes={girlVotes.length} boyVotes={boyVotes.length} />
           </div>
 
-          {/* Boys Section */}
-          <div className="bg-gradient-to-br from-boy-accent to-boy-secondary/50 rounded-3xl p-6 border border-boy-secondary/20 backdrop-blur-sm">
-            <div className="text-center mb-6">
-              <h2 className="text-3xl font-bold text-boy mb-2">👦 Garçon</h2>
-              <p className="text-boy/80 font-medium">{boyVotes.length} vote{boyVotes.length !== 1 ? 's' : ''}</p>
+          {/* Votes Display */}
+          <div className="max-w-7xl mx-auto px-4 pb-12">
+            <div className="grid md:grid-cols-2 gap-8">
+              {/* Girls Section */}
+              <div className="bg-gradient-to-br from-girl-accent to-girl-secondary/50 rounded-3xl p-6 border border-girl-secondary/20 backdrop-blur-sm">
+                <div className="text-center mb-6">
+                  <h2 className="text-3xl font-bold text-girl mb-2">👧 Fille</h2>
+                  <p className="text-girl/80 font-medium">{girlVotes.length} vote{girlVotes.length !== 1 ? 's' : ''}</p>
+                </div>
+                <VotesList votes={girlVotes} gender="girl" />
+              </div>
+
+              {/* Boys Section */}
+              <div className="bg-gradient-to-br from-boy-accent to-boy-secondary/50 rounded-3xl p-6 border border-boy-secondary/20 backdrop-blur-sm">
+                <div className="text-center mb-6">
+                  <h2 className="text-3xl font-bold text-boy mb-2">👦 Garçon</h2>
+                  <p className="text-boy/80 font-medium">{boyVotes.length} vote{boyVotes.length !== 1 ? 's' : ''}</p>
+                </div>
+                <VotesList votes={boyVotes} gender="boy" />
+              </div>
             </div>
-            <VotesList votes={boyVotes} gender="boy" />
           </div>
+        </>
+      ) : (
+        <>
+          {/* Hidden Results Message */}
+          <div className="max-w-4xl mx-auto px-4 mb-12">
+            <div className="text-center bg-card/80 backdrop-blur-sm rounded-3xl p-12 border-0 shadow-2xl">
+              <div className="text-6xl mb-6">🤐</div>
+              <h3 className="text-2xl font-bold mb-4">Résultats cachés</h3>
+              <p className="text-muted-foreground mb-8 text-lg">
+                {hasVoted 
+                  ? "Vous avez voté ! Les résultats sont maintenant visibles."
+                  : "Votez d'abord pour découvrir les résultats, ou cliquez sur le bouton ci-dessous pour les révéler."}
+              </p>
+              {!hasVoted && (
+                <Button 
+                  onClick={() => setShowResults(true)}
+                  variant="outline"
+                  size="lg"
+                  className="gap-2"
+                >
+                  <Eye className="w-5 h-5" />
+                  Révéler les résultats
+                </Button>
+              )}
+            </div>
+          </div>
+        </>
+      )}
+
+      {/* Hide Results Button */}
+      {showResults && (
+        <div className="max-w-4xl mx-auto px-4 pb-12 text-center">
+          <Button 
+            onClick={() => setShowResults(false)}
+            variant="ghost"
+            size="sm"
+            className="gap-2 text-muted-foreground"
+          >
+            <EyeOff className="w-4 h-4" />
+            Cacher les résultats
+          </Button>
         </div>
-      </div>
+      )}
     </div>
   );
 };
