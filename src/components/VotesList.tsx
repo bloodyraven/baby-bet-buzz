@@ -44,10 +44,11 @@ export const VotesList = ({ votes, gender }: VotesListProps) => {
                 <p className="font-semibold text-foreground">{vote.name}</p>
                 <div className="flex items-center gap-1 text-sm text-muted-foreground">
                   <Clock className="w-3 h-3" />
-                  {vote.timestamp.toLocaleDateString("fr-FR", {
+                  {new Date(vote.created_at).toLocaleDateString("fr-FR", {
                     hour: "2-digit",
                     minute: "2-digit",
                   })}
+
                 </div>
               </div>
             </div>

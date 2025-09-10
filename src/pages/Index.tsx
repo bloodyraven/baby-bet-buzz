@@ -1,15 +1,17 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { VoteForm } from "@/components/VoteForm";
 import { VotesList } from "@/components/VotesList";
 import { VoteStats } from "@/components/VoteStats";
 import { Baby, Heart, Eye, EyeOff } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { supabase } from "@/lib/supabaseClient";
 
+// Typage aligné avec ta table Supabase
 export interface Vote {
-  id: string;
+  id: number;
   name: string;
   gender: "girl" | "boy";
-  timestamp: Date;
+  created_at: string; // timestamp Supabase
 }
 
 const Index = () => {
@@ -17,20 +19,42 @@ const Index = () => {
   const [hasVoted, setHasVoted] = useState(false);
   const [showResults, setShowResults] = useState(false);
 
-  const handleVote = (name: string, gender: "girl" | "boy") => {
-    const newVote: Vote = {
-      id: Date.now().toString(),
-      name,
-      gender,
-      timestamp: new Date(),
+  // Charger les votes existants au montage
+  useEffect(() => {
+    const fetchVotes = async () => {
+      const { data, error } = await supabase
+        .from("vote")
+        .select("*")
+        .order("created_at", { ascending: false });
+
+      if (error) {
+        console.error("Erreur fetch vote:", error);
+      } else if (data) {
+        setVotes(data);
+      }
     };
-    setVotes(prev => [...prev, newVote]);
-    setHasVoted(true);
-    setShowResults(true);
+
+    fetchVotes();
+  }, []);
+
+  // Ajouter un vote dans Supabase
+  const handleVote = async (name: string, gender: "girl" | "boy") => {
+    const { data, error } = await supabase
+      .from("vote")
+      .insert([{ name, gender }])
+      .select();
+
+    if (error) {
+      console.error("Erreur insert vote:", error);
+    } else if (data && data.length > 0) {
+      setVotes((prev) => [data[0], ...prev]); // ajoute en haut de la liste
+      setHasVoted(true);
+      setShowResults(true);
+    }
   };
 
-  const girlVotes = votes.filter(vote => vote.gender === "girl");
-  const boyVotes = votes.filter(vote => vote.gender === "boy");
+  const girlVotes = votes.filter((vote) => vote.gender === "girl");
+  const boyVotes = votes.filter((vote) => vote.gender === "boy");
 
   return (
     <div className="min-h-screen bg-gradient-to-r from-girl-secondary via-background to-boy-secondary">
@@ -68,7 +92,9 @@ const Index = () => {
               <div className="bg-gradient-to-br from-girl-accent to-girl-secondary/50 rounded-3xl p-6 border border-girl-secondary/20 backdrop-blur-sm">
                 <div className="text-center mb-6">
                   <h2 className="text-3xl font-bold text-girl mb-2">👧 Fille</h2>
-                  <p className="text-girl/80 font-medium">{girlVotes.length} vote{girlVotes.length !== 1 ? 's' : ''}</p>
+                  <p className="text-girl/80 font-medium">
+                    {girlVotes.length} vote{girlVotes.length !== 1 ? "s" : ""}
+                  </p>
                 </div>
                 <VotesList votes={girlVotes} gender="girl" />
               </div>
@@ -77,7 +103,9 @@ const Index = () => {
               <div className="bg-gradient-to-br from-boy-accent to-boy-secondary/50 rounded-3xl p-6 border border-boy-secondary/20 backdrop-blur-sm">
                 <div className="text-center mb-6">
                   <h2 className="text-3xl font-bold text-boy mb-2">👦 Garçon</h2>
-                  <p className="text-boy/80 font-medium">{boyVotes.length} vote{boyVotes.length !== 1 ? 's' : ''}</p>
+                  <p className="text-boy/80 font-medium">
+                    {boyVotes.length} vote{boyVotes.length !== 1 ? "s" : ""}
+                  </p>
                 </div>
                 <VotesList votes={boyVotes} gender="boy" />
               </div>
@@ -92,12 +120,12 @@ const Index = () => {
               <div className="text-6xl mb-6">🤐</div>
               <h3 className="text-2xl font-bold mb-4">Résultats cachés</h3>
               <p className="text-muted-foreground mb-8 text-lg">
-                {hasVoted 
+                {hasVoted
                   ? "Vous avez voté ! Les résultats sont maintenant visibles."
                   : "Votez d'abord pour découvrir les résultats, ou cliquez sur le bouton ci-dessous pour les révéler."}
               </p>
               {!hasVoted && (
-                <Button 
+                <Button
                   onClick={() => setShowResults(true)}
                   variant="outline"
                   size="lg"
@@ -115,7 +143,7 @@ const Index = () => {
       {/* Hide Results Button */}
       {showResults && (
         <div className="max-w-4xl mx-auto px-4 pb-12 text-center">
-          <Button 
+          <Button
             onClick={() => setShowResults(false)}
             variant="ghost"
             size="sm"
