@@ -7,34 +7,35 @@ import { X } from "lucide-react";
 
 interface GiftFormProps {
   onSubmit: (gift: {
-    name: string;
-    description: string;
-    price?: number;
-    url?: string;
+    titre: string;
+    desc?: string;
+    prix?: number;
+    link?: string;
   }) => void;
   onCancel: () => void;
 }
 
 export const GiftForm = ({ onSubmit, onCancel }: GiftFormProps) => {
-  const [name, setName] = useState("");
-  const [description, setDescription] = useState("");
-  const [price, setPrice] = useState("");
-  const [url, setUrl] = useState("");
+  const [titre, setTitre] = useState("");
+  const [desc, setDesc] = useState("");
+  const [prix, setPrix] = useState("");
+  const [link, setLink] = useState("");
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (name.trim()) {
-      onSubmit({
-        name: name.trim(),
-        description: description.trim(),
-        price: price ? parseFloat(price) : undefined,
-        url: url.trim() || undefined,
-      });
-      setName("");
-      setDescription("");
-      setPrice("");
-      setUrl("");
-    }
+    if (!titre.trim()) return;
+
+    onSubmit({
+      titre: titre.trim(),
+      desc: desc.trim() || undefined,
+      prix: prix ? parseFloat(prix) : undefined,
+      link: link.trim() || undefined,
+    });
+
+    setTitre("");
+    setDesc("");
+    setPrix("");
+    setLink("");
   };
 
   return (
@@ -51,47 +52,47 @@ export const GiftForm = ({ onSubmit, onCancel }: GiftFormProps) => {
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <Label htmlFor="name">Nom du cadeau *</Label>
+            <Label htmlFor="titre">Nom du cadeau *</Label>
             <Input
-              id="name"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
+              id="titre"
+              value={titre}
+              onChange={(e) => setTitre(e.target.value)}
               placeholder="Ex: Peluche lapin"
               required
             />
           </div>
 
           <div>
-            <Label htmlFor="description">Description</Label>
+            <Label htmlFor="desc">Description</Label>
             <Textarea
-              id="description"
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
+              id="desc"
+              value={desc}
+              onChange={(e) => setDesc(e.target.value)}
               placeholder="Description du cadeau..."
               rows={3}
             />
           </div>
 
           <div>
-            <Label htmlFor="price">Prix (€)</Label>
+            <Label htmlFor="prix">Prix (€)</Label>
             <Input
-              id="price"
+              id="prix"
               type="number"
               step="0.01"
               min="0"
-              value={price}
-              onChange={(e) => setPrice(e.target.value)}
+              value={prix}
+              onChange={(e) => setPrix(e.target.value)}
               placeholder="Ex: 25.00"
             />
           </div>
 
           <div>
-            <Label htmlFor="url">Lien (optionnel)</Label>
+            <Label htmlFor="link">Lien (optionnel)</Label>
             <Input
-              id="url"
+              id="link"
               type="url"
-              value={url}
-              onChange={(e) => setUrl(e.target.value)}
+              value={link}
+              onChange={(e) => setLink(e.target.value)}
               placeholder="https://..."
             />
           </div>

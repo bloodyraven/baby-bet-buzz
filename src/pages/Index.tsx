@@ -77,7 +77,7 @@ const Index = () => {
           <Heart className="w-8 h-8 text-boy" />
         </div>
         <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-          Votez pour deviner le genre du bébé qui arrive ! Laissez votre nom et votre prédiction.
+          Votez pour deviner le genre du bébé ! Laissez votre nom et votre prédiction.
         </p>
       </header>
 
