@@ -2,9 +2,10 @@ import { useEffect, useState } from "react";
 import { VoteForm } from "@/components/VoteForm";
 import { VotesList } from "@/components/VotesList";
 import { VoteStats } from "@/components/VoteStats";
-import { Baby, Heart, Eye, EyeOff } from "lucide-react";
+import { Baby, Heart, Eye, EyeOff, Gift } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/lib/supabaseClient";
+import { Link } from "react-router-dom";
 
 // Typage aligné avec ta table Supabase
 export interface Vote {
@@ -60,6 +61,14 @@ const Index = () => {
     <div className="min-h-screen bg-gradient-to-r from-girl-secondary via-background to-boy-secondary">
       {/* Header */}
       <header className="text-center py-8 px-4">
+        <div className="flex justify-center mb-6">
+          <Link to="/cadeaux">
+            <Button variant="outline" className="flex items-center gap-2">
+              <Gift className="w-4 h-4" />
+              Liste de Naissance
+            </Button>
+          </Link>
+        </div>
         <div className="flex items-center justify-center gap-3 mb-4">
           <Baby className="w-8 h-8 text-girl" />
           <h1 className="text-4xl md:text-6xl font-bold bg-gradient-to-r from-girl to-boy bg-clip-text text-transparent">
