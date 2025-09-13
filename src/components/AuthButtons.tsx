@@ -47,14 +47,7 @@ const AuthButtons = () => {
   };
 
   if (user) {
-    return (
-      <div className="flex items-center gap-3">
-        <span className="font-semibold">Bonjour, {user.pseudo}</span>
-        <Button variant="outline" size="sm" onClick={logout}>
-          Déconnexion
-        </Button>
-      </div>
-    );
+    return null; // UserProfile component is now used instead
   }
 
   return (

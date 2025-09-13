@@ -2,10 +2,12 @@ import { useEffect, useState } from "react";
 import { GiftForm } from "@/components/GiftForm";
 import { GiftsList, GiftType } from "@/components/GiftsList";
 import { Button } from "@/components/ui/button";
-import { Plus, ArrowLeft } from "lucide-react";
+import { Plus, Gift, Heart } from "lucide-react";
 import { supabase } from "@/lib/supabaseClient";
 import { useUser } from "@/context/UserContext";
 import { AuthButtons } from "@/components/AuthButtons";
+import { UserProfile } from "@/components/UserProfile";
+import { Navigation } from "@/components/Navigation";
 
 const GiftListPage = () => {
   const [gifts, setGifts] = useState<GiftType[]>([]);
@@ -49,50 +51,72 @@ const GiftListPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background p-4 bg-gradient-to-r from-girl-secondary via-background to-boy-secondary">
-      <header className="max-w-4xl mx-auto flex items-center justify-between mb-8">
-        <div className="flex items-center gap-2">
-          <Button variant="ghost" onClick={() => window.history.back()}>
-            <ArrowLeft className="w-4 h-4" />
-          </Button>
-          <h1 className="text-2xl font-bold bg-gradient-to-r from-girl-primary to-boy-primary bg-clip-text">
-            Liste de Naissance
-          </h1>
-        </div>
-        {user?.admin && (
-        <Button onClick={() => setShowForm(true)} className="flex items-center gap-2 bg-gradient-to-r from-girl-primary to-boy-primary text-black">
-          <Plus className="w-4 h-4" />
-          Ajouter un cadeau
-        </Button>
-        )}
-        <AuthButtons />
-      </header>
-
-      {showForm && <GiftForm onSubmit={handleAddGift} onCancel={() => setShowForm(false)} />}
-
-      {loading ? (
-        <div className="text-center text-muted-foreground">Chargement...</div>
-      ) : (
-        <>
-          {/* Statistiques */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 max-w-6xl mx-auto">
-            <div className="bg-white/90 backdrop-blur-sm rounded-2xl p-6 text-center shadow-lg border border-white/20">
-              <div className="text-3xl font-bold text-gray-800">{gifts.length}</div>
-              <div className="text-muted-foreground">Cadeaux au total</div>
-            </div>
-            <div className="bg-gradient-to-br from-girl-secondary to-girl-accent rounded-2xl p-6 text-center shadow-lg">
-              <div className="text-3xl font-bold text-girl-primary">{gifts.filter(g => g.reserve && g.reserve.trim() !== "").length}</div>
-              <div className="text-girl-primary/70">Réservés</div>
-            </div>
-            <div className="bg-gradient-to-br from-boy-secondary to-boy-accent rounded-2xl p-6 text-center shadow-lg">
-              <div className="text-3xl font-bold text-boy-primary">{gifts.length - gifts.filter(g => g.reserve && g.reserve.trim() !== "").length}</div>
-              <div className="text-boy-primary/70">Disponibles</div>
+    <div className="min-h-screen bg-gradient-to-r from-girl-secondary via-background to-boy-secondary">
+      {/* Header */}
+      <header className="sticky top-0 bg-card/80 backdrop-blur-md border-b z-40">
+        <div className="max-w-7xl mx-auto px-4 py-4">
+          <div className="flex justify-between items-center">
+            <Navigation />
+            <div className="flex items-center gap-4">
+              {user?.admin && (
+                <Button 
+                  onClick={() => setShowForm(true)} 
+                  size="sm"
+                  className="flex items-center gap-2 bg-gradient-to-r from-girl to-boy text-white"
+                >
+                  <Plus className="w-4 h-4" />
+                  Ajouter
+                </Button>
+              )}
+              {user ? <UserProfile /> : <AuthButtons />}
             </div>
           </div>
+        </div>
+      </header>
 
-          <GiftsList gifts={gifts} setGifts={setGifts} supabase={supabase} />
-        </>
-      )}
+      {/* Title Section */}
+      <div className="text-center py-8 px-4">
+        <div className="max-w-7xl mx-auto mb-6">
+          <div className="flex items-center justify-center gap-3 mb-4">
+            <Gift className="w-8 h-8 text-girl" />
+            <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-girl to-boy bg-clip-text text-transparent">
+              Liste de Naissance
+            </h1>
+            <Heart className="w-8 h-8 text-boy" />
+          </div>
+          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+            Découvrez les cadeaux souhaités pour l'arrivée de bébé et réservez celui qui vous fait plaisir !
+          </p>
+        </div>
+      </div>
+
+      <div className="max-w-6xl mx-auto px-4">
+        {showForm && <GiftForm onSubmit={handleAddGift} onCancel={() => setShowForm(false)} />}
+
+        {loading ? (
+          <div className="text-center text-muted-foreground py-12">Chargement...</div>
+        ) : (
+          <>
+            {/* Statistiques */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+              <div className="bg-card/80 backdrop-blur-sm rounded-2xl p-6 text-center shadow-lg border-0">
+                <div className="text-3xl font-bold text-foreground">{gifts.length}</div>
+                <div className="text-muted-foreground">Cadeaux au total</div>
+              </div>
+              <div className="bg-gradient-to-br from-girl-secondary to-girl-accent rounded-2xl p-6 text-center shadow-lg">
+                <div className="text-3xl font-bold text-girl">{gifts.filter(g => g.reserve && g.reserve.trim() !== "").length}</div>
+                <div className="text-girl/70">Réservés</div>
+              </div>
+              <div className="bg-gradient-to-br from-boy-secondary to-boy-accent rounded-2xl p-6 text-center shadow-lg">
+                <div className="text-3xl font-bold text-boy">{gifts.length - gifts.filter(g => g.reserve && g.reserve.trim() !== "").length}</div>
+                <div className="text-boy/70">Disponibles</div>
+              </div>
+            </div>
+
+            <GiftsList gifts={gifts} setGifts={setGifts} supabase={supabase} />
+          </>
+        )}
+      </div>
     </div>
   );
 };

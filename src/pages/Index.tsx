@@ -3,10 +3,11 @@ import { VoteForm } from "@/components/VoteForm";
 import { VotesList } from "@/components/VotesList";
 import { VoteStats } from "@/components/VoteStats";
 import { AuthButtons } from "@/components/AuthButtons";
-import { Baby, Heart, Eye, EyeOff, Gift } from "lucide-react";
+import { UserProfile } from "@/components/UserProfile";
+import { Navigation } from "@/components/Navigation";
+import { Baby, Heart, Eye, EyeOff } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/lib/supabaseClient";
-import { Link } from "react-router-dom";
 import { useUser } from "@/context/UserContext";
 
 // Typage aligné avec ta table Supabase
@@ -70,27 +71,32 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-gradient-to-r from-girl-secondary via-background to-boy-secondary">
       {/* Header */}
-      <header className="text-center py-8 px-4">
-        <div className="flex justify-between items-center max-w-7xl mx-auto mb-6">
-          <Link to="/cadeaux">
-            <Button variant="outline" className="flex items-center gap-2">
-              <Gift className="w-4 h-4" />
-              Liste de Naissance
-            </Button>
-          </Link>
-          <AuthButtons />
+      <header className="sticky top-0 bg-card/80 backdrop-blur-md border-b z-40 mb-8">
+        <div className="max-w-7xl mx-auto px-4 py-4">
+          <div className="flex justify-between items-center">
+            <Navigation />
+            <div className="flex items-center gap-4">
+              {user ? <UserProfile /> : <AuthButtons />}
+            </div>
+          </div>
         </div>
-        <div className="flex items-center justify-center gap-3 mb-4">
-          <Baby className="w-8 h-8 text-girl" />
-          <h1 className="text-4xl md:text-6xl font-bold bg-gradient-to-r from-girl to-boy bg-clip-text text-transparent">
-            Fille ou Garçon ?
-          </h1>
-          <Heart className="w-8 h-8 text-boy" />
-        </div>
-        <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-          Votez pour deviner le genre du bébé ! Laissez votre nom et votre prédiction.
-        </p>
       </header>
+
+      {/* Title Section */}
+      <div className="text-center py-8 px-4">
+        <div className="max-w-7xl mx-auto mb-6">
+          <div className="flex items-center justify-center gap-3 mb-4">
+            <Baby className="w-8 h-8 text-girl" />
+            <h1 className="text-4xl md:text-6xl font-bold bg-gradient-to-r from-girl to-boy bg-clip-text text-transparent">
+              Fille ou Garçon ?
+            </h1>
+            <Heart className="w-8 h-8 text-boy" />
+          </div>
+          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+            Votez pour deviner le genre du bébé ! Laissez votre nom et votre prédiction.
+          </p>
+        </div>
+      </div>
 
       {/* Vote Form */}
       <div className="max-w-4xl mx-auto px-4 mb-12">
