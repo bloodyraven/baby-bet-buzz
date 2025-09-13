@@ -20,7 +20,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
 
   useEffect(() => {
-    const saved = localStorage.getItem("user");
+    const saved = localStorage.getItem("users");
     if (saved) setUser(JSON.parse(saved));
   }, []);
 
@@ -28,7 +28,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
     const { data, error } = await supabase
       .from("users")
       .select("*")
-      .eq("pseudo", pseudo)
+      .ilike("pseudo", pseudo.toLowerCase())
       .eq("code", code)
       .single();
 
@@ -47,7 +47,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
     const { data: existingUser, error: selectError } = await supabase
       .from("users")
       .select("id")
-      .eq("pseudo", pseudo)
+      .ilike("pseudo", pseudo.toLowerCase())
       .single();
 
     if (selectError && selectError.code !== "PGRST116") {
@@ -59,9 +59,10 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
       throw new Error("Ce pseudo est déjà utilisé !");
     }
 
+    const pseudoLower = pseudo.toLowerCase();
     const { data, error } = await supabase
       .from("users")
-      .insert([{ pseudo, code, admin: false, last_login: new Date() }])
+      .insert([{ pseudoLower, code, admin: false, last_login: new Date() }])
       .select()
       .single();
 

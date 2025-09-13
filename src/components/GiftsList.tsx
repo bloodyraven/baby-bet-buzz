@@ -63,7 +63,7 @@ export const GiftsList = ({ gifts, setGifts, supabase }: GiftsListProps) => {
   }
 
   return (
-    <div className="grid gap-4 py-8">
+    <div className="grid gap-4 py-8 max-w-6xl mx-auto">
       <h2 className="text-xl font-semibold text-center">
         Cadeaux de Naissance ({gifts.length})
       </h2>

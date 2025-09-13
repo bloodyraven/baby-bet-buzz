@@ -16,9 +16,10 @@ interface VoteFormProps {
   supabase: SupabaseClient;
   votes: Vote[];
   setVotes: (votes: Vote[]) => void;
+  hasVoted: boolean;
 }
 
-export const VoteForm = ({ supabase, votes, setVotes }: VoteFormProps) => {
+export const VoteForm = ({ supabase, votes, setVotes, hasVoted }: VoteFormProps) => {
   const { user } = useUser();
   const [selectedGender, setSelectedGender] = useState<"girl" | "boy" | null>(null);
 
@@ -66,9 +67,13 @@ export const VoteForm = ({ supabase, votes, setVotes }: VoteFormProps) => {
     // Ajouter le nouveau vote
     await supabase.from("vote").insert({ name: user.pseudo, gender: selectedGender });
 
-    toast.success(
-      `Merci ${user.pseudo} ! Votre vote pour "${selectedGender === "girl" ? "Fille" : "Garçon"}" a été enregistré ! 🎉`
-    );
+    if (hasVoted) {
+      toast.success(`Votre vote a été modifié.`);
+    } else {
+      toast.success(
+        `Merci ${user.pseudo} ! Votre vote pour "${selectedGender === "girl" ? "Fille" : "Garçon"}" a été enregistré ! 🎉`
+      );
+    }
 
     await fetchVotes(); // Recharge la liste
   };
@@ -119,7 +124,7 @@ export const VoteForm = ({ supabase, votes, setVotes }: VoteFormProps) => {
             size="lg"
             className="w-full h-14 text-lg font-semibold bg-gradient-to-r from-girl to-boy hover:from-girl/90 hover:to-boy/90 text-white border-0 shadow-lg hover:shadow-xl transition-all duration-300"
           >
-            Enregistrer mon vote ! 🗳️
+            {hasVoted ? "Modifier mon vote 📝" : "Enregistrer mon vote 🗳️"}
           </Button>
         </form>
       ) : (

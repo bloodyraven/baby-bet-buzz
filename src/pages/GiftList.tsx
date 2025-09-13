@@ -60,7 +60,7 @@ const GiftListPage = () => {
           </h1>
         </div>
         {user?.admin && (
-        <Button onClick={() => setShowForm(true)} className="flex items-center gap-2">
+        <Button onClick={() => setShowForm(true)} className="flex items-center gap-2 bg-gradient-to-r from-girl-primary to-boy-primary text-black">
           <Plus className="w-4 h-4" />
           Ajouter un cadeau
         </Button>
@@ -75,7 +75,7 @@ const GiftListPage = () => {
       ) : (
         <>
           {/* Statistiques */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 max-w-6xl mx-auto">
             <div className="bg-white/90 backdrop-blur-sm rounded-2xl p-6 text-center shadow-lg border border-white/20">
               <div className="text-3xl font-bold text-gray-800">{gifts.length}</div>
               <div className="text-muted-foreground">Cadeaux au total</div>

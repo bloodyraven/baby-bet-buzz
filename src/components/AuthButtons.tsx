@@ -111,7 +111,7 @@ const AuthButtons = () => {
       {/* Inscription */}
       <Dialog open={isSignupOpen} onOpenChange={setIsSignupOpen}>
         <DialogTrigger asChild>
-          <Button size="sm" className="gap-2">
+          <Button size="sm" className="gap-2 bg-gradient-to-r from-girl-primary to-boy-primary text-black">
             <UserPlus className="w-4 h-4" /> Inscription
           </Button>
         </DialogTrigger>

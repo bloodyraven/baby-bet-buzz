@@ -94,7 +94,7 @@ const Index = () => {
 
       {/* Vote Form */}
       <div className="max-w-4xl mx-auto px-4 mb-12">
-        <VoteForm supabase={supabase} votes={votes} setVotes={setVotes} />
+        <VoteForm supabase={supabase} votes={votes} setVotes={setVotes} hasVoted={hasVoted}/>
       </div>
 
       {/* Results Section */}
@@ -106,7 +106,7 @@ const Index = () => {
           </div>
 
           {/* Votes Display */}
-          <div className="max-w-7xl mx-auto px-4 pb-12">
+          <div className="max-w-6xl mx-auto px-4 pb-12">
             <div className="grid md:grid-cols-2 gap-8">
               {/* Girls Section */}
               <div className="bg-gradient-to-br from-girl-accent to-girl-secondary/50 rounded-3xl p-6 border border-girl-secondary/20 backdrop-blur-sm">
