@@ -1,49 +1,75 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { LogIn, UserPlus, User } from "lucide-react";
+import { useUser } from "@/context/UserContext";
 
 const AuthButtons = () => {
+  const { user, login, signup, logout } = useUser();
   const [loginData, setLoginData] = useState({ pseudo: "", code: "" });
   const [signupData, setSignupData] = useState({ pseudo: "", code: "", confirmCode: "" });
   const [isLoginOpen, setIsLoginOpen] = useState(false);
   const [isSignupOpen, setIsSignupOpen] = useState(false);
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Connexion:", loginData);
-    setIsLoginOpen(false);
-    setLoginData({ pseudo: "", code: "" });
+    try {
+      await login(loginData.pseudo, loginData.code);
+      setIsLoginOpen(false);
+      setLoginData({ pseudo: "", code: "" });
+    } catch (err: any) {
+      alert(err.message);
+    }
   };
 
-  const handleSignup = (e: React.FormEvent) => {
+  const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
     if (signupData.code !== signupData.confirmCode) {
       alert("Les codes ne correspondent pas !");
       return;
     }
-    console.log("Inscription:", signupData);
-    setIsSignupOpen(false);
-    setSignupData({ pseudo: "", code: "", confirmCode: "" });
+    try {
+      await signup(signupData.pseudo, signupData.code);
+      setIsSignupOpen(false);
+      setSignupData({ pseudo: "", code: "", confirmCode: "" });
+    } catch (err: any) {
+      alert(err.message);
+    }
   };
+
+  if (user) {
+    return (
+      <div className="flex items-center gap-3">
+        <span className="font-semibold">Bonjour, {user.pseudo}</span>
+        <Button variant="outline" size="sm" onClick={logout}>
+          Déconnexion
+        </Button>
+      </div>
+    );
+  }
 
   return (
     <div className="flex items-center gap-3">
-      {/* Bouton Connexion */}
+      {/* Connexion */}
       <Dialog open={isLoginOpen} onOpenChange={setIsLoginOpen}>
         <DialogTrigger asChild>
           <Button variant="outline" size="sm" className="gap-2">
-            <LogIn className="w-4 h-4" />
-            Connexion
+            <LogIn className="w-4 h-4" /> Connexion
           </Button>
         </DialogTrigger>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
-              <User className="w-5 h-5 text-primary" />
-              Connexion
+              <User className="w-5 h-5 text-primary" /> Connexion
             </DialogTitle>
             <DialogDescription>
               Entrez votre pseudo et votre code pour vous connecter.
@@ -51,9 +77,8 @@ const AuthButtons = () => {
           </DialogHeader>
           <form onSubmit={handleLogin} className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="login-pseudo">Pseudo</Label>
+              <Label>Pseudo</Label>
               <Input
-                id="login-pseudo"
                 type="text"
                 placeholder="Votre pseudo"
                 value={loginData.pseudo}
@@ -62,9 +87,8 @@ const AuthButtons = () => {
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="login-code">Code (4 chiffres)</Label>
+              <Label>Code (4 chiffres)</Label>
               <Input
-                id="login-code"
                 type="password"
                 placeholder="****"
                 maxLength={4}
@@ -78,27 +102,23 @@ const AuthButtons = () => {
               <Button type="button" variant="outline" className="flex-1" onClick={() => setIsLoginOpen(false)}>
                 Annuler
               </Button>
-              <Button type="submit" className="flex-1">
-                Se connecter
-              </Button>
+              <Button type="submit" className="flex-1">Se connecter</Button>
             </div>
           </form>
         </DialogContent>
       </Dialog>
 
-      {/* Bouton Inscription */}
+      {/* Inscription */}
       <Dialog open={isSignupOpen} onOpenChange={setIsSignupOpen}>
         <DialogTrigger asChild>
           <Button size="sm" className="gap-2">
-            <UserPlus className="w-4 h-4" />
-            Inscription
+            <UserPlus className="w-4 h-4" /> Inscription
           </Button>
         </DialogTrigger>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
-              <UserPlus className="w-5 h-5 text-primary" />
-              Inscription
+              <UserPlus className="w-5 h-5 text-primary" /> Inscription
             </DialogTitle>
             <DialogDescription>
               Créez votre compte avec un pseudo et un code à 4 chiffres.
@@ -106,9 +126,8 @@ const AuthButtons = () => {
           </DialogHeader>
           <form onSubmit={handleSignup} className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="signup-pseudo">Pseudo</Label>
+              <Label>Pseudo</Label>
               <Input
-                id="signup-pseudo"
                 type="text"
                 placeholder="Choisissez votre pseudo"
                 value={signupData.pseudo}
@@ -117,9 +136,8 @@ const AuthButtons = () => {
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="signup-code">Code (4 chiffres)</Label>
+              <Label>Code (4 chiffres)</Label>
               <Input
-                id="signup-code"
                 type="password"
                 placeholder="****"
                 maxLength={4}
@@ -130,9 +148,8 @@ const AuthButtons = () => {
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="signup-confirm">Confirmer le code</Label>
+              <Label>Confirmer le code</Label>
               <Input
-                id="signup-confirm"
                 type="password"
                 placeholder="****"
                 maxLength={4}
@@ -146,9 +163,7 @@ const AuthButtons = () => {
               <Button type="button" variant="outline" className="flex-1" onClick={() => setIsSignupOpen(false)}>
                 Annuler
               </Button>
-              <Button type="submit" className="flex-1">
-                S'inscrire
-              </Button>
+              <Button type="submit" className="flex-1">S'inscrire</Button>
             </div>
           </form>
         </DialogContent>

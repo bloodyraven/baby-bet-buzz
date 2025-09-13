@@ -7,16 +7,18 @@ import { Baby, Heart, Eye, EyeOff, Gift } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/lib/supabaseClient";
 import { Link } from "react-router-dom";
+import { useUser } from "@/context/UserContext";
 
 // Typage aligné avec ta table Supabase
 export interface Vote {
-  id: number;
+  id: string;
   name: string;
   gender: "girl" | "boy";
   created_at: string; // timestamp Supabase
 }
 
 const Index = () => {
+  const { user } = useUser();
   const [votes, setVotes] = useState<Vote[]>([]);
   const [hasVoted, setHasVoted] = useState(false);
   const [showResults, setShowResults] = useState(false);
@@ -33,14 +35,21 @@ const Index = () => {
         console.error("Erreur fetch vote:", error);
       } else if (data) {
         setVotes(data);
+        if (user) {
+          const voted = data.some((v) => v.name === user.pseudo);
+          setHasVoted(voted);
+          if (voted) setShowResults(true);
+        }
       }
     };
 
     fetchVotes();
-  }, []);
+  }, [user]);
 
   // Ajouter un vote dans Supabase
   const handleVote = async (name: string, gender: "girl" | "boy") => {
+    await supabase.from("vote").delete().eq("name", name);
+
     const { data, error } = await supabase
       .from("vote")
       .insert([{ name, gender }])
@@ -85,7 +94,7 @@ const Index = () => {
 
       {/* Vote Form */}
       <div className="max-w-4xl mx-auto px-4 mb-12">
-        <VoteForm onVote={handleVote} />
+        <VoteForm supabase={supabase} votes={votes} setVotes={setVotes} />
       </div>
 
       {/* Results Section */}
@@ -135,17 +144,15 @@ const Index = () => {
                   ? "Vous avez voté ! Les résultats sont maintenant visibles."
                   : "Votez d'abord pour découvrir les résultats, ou cliquez sur le bouton ci-dessous pour les révéler."}
               </p>
-              {!hasVoted && (
-                <Button
-                  onClick={() => setShowResults(true)}
-                  variant="outline"
-                  size="lg"
-                  className="gap-2"
-                >
-                  <Eye className="w-5 h-5" />
-                  Révéler les résultats
-                </Button>
-              )}
+              <Button
+                onClick={() => setShowResults(true)}
+                variant="outline"
+                size="lg"
+                className="gap-2"
+              >
+                <Eye className="w-5 h-5" />
+                Révéler les résultats
+              </Button>
             </div>
           </div>
         </>
