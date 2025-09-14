@@ -51,24 +51,36 @@ const GiftListPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background p-4 bg-gradient-to-r from-girl-secondary via-background to-boy-secondary">
-      <header className="max-w-7xl mx-auto flex items-center justify-between mb-8">
-        <div className="flex items-center gap-3">
-          <Button variant="ghost" onClick={() => window.history.back()}>
-            ←
-          </Button>
-          <h1 className="text-2xl font-bold bg-gradient-to-r from-girl-primary to-boy-primary bg-clip-text text-black">
-            <Gift className="inline w-5 h-5 mr-2" /> Liste de Naissance
-          </h1>
-        </div>
-
-        <div className="flex items-center gap-4">
-          <UserProfile />
-          <AuthButtons />
+    <div className="min-h-screen bg-gradient-to-r from-girl-secondary via-background to-boy-secondary">
+      {/* Header */}
+      <header className="sticky top-0 bg-card/80 backdrop-blur-md border-b z-40 mb-8">
+        <div className="max-w-7xl mx-auto px-4 py-4">
+          <div className="flex justify-between items-center">
+            <Navigation />
+            <div className="flex items-center gap-4">
+              {user ? <UserProfile /> : <AuthButtons />}
+            </div>
+          </div>
         </div>
       </header>
 
-      <div className="max-w-6xl mx-auto px-4">
+      {/* Title Section */}
+      <div className="text-center py-8 px-4">
+        <div className="max-w-7xl mx-auto mb-6">
+          <div className="flex items-center justify-center gap-3 mb-4">
+            <Gift className="w-8 h-8 text-girl" />
+            <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-girl to-boy bg-clip-text text-transparent">
+              Liste de Naissance
+            </h1>
+            <Heart className="w-8 h-8 text-boy" />
+          </div>
+          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+            Découvrez notre liste de naissance et réservez les cadeaux qui vous font plaisir !
+          </p>
+        </div>
+      </div>
+
+      <main className="max-w-6xl mx-auto px-4">
         {/* Move the Add button on the page (admin only) */}
         {user?.admin && (
           <div className="mb-6 flex justify-end">
@@ -106,7 +118,7 @@ const GiftListPage = () => {
             <GiftsList gifts={gifts} setGifts={setGifts} supabase={supabase} />
           </>
         )}
-      </div>
+      </main>
     </div>
   );
 };
