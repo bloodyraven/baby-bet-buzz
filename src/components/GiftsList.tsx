@@ -1,9 +1,10 @@
-import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import { User, Gift, ExternalLink } from "lucide-react";
+import { User as UserIcon, Gift as GiftIcon, ExternalLink, Trash } from "lucide-react";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { useUser } from "@/context/UserContext";
+import { toast } from "sonner";
+import type { Dispatch, SetStateAction } from "react";
 
 export interface GiftType {
   id: string;
@@ -16,133 +17,128 @@ export interface GiftType {
 
 interface GiftsListProps {
   gifts: GiftType[];
-  setGifts: React.Dispatch<React.SetStateAction<GiftType[]>>;
   supabase: SupabaseClient;
+  setGifts: Dispatch<SetStateAction<GiftType[]>>;
 }
 
-export const GiftsList = ({ gifts, setGifts, supabase }: GiftsListProps) => {
+export const GiftsList = ({ gifts, supabase, setGifts }: GiftsListProps) => {
   const { user } = useUser();
 
   const handleReserve = async (giftId: string) => {
     if (!user) return;
-
-    await supabase
-      .from("cadeau")
-      .update({ reserve: user.pseudo })
-      .eq("id", giftId);
-
-    setGifts(prev =>
-      prev.map(g => g.id === giftId ? { ...g, reserve: user.pseudo } : g)
-    );
-    
+    try {
+      const { error } = await supabase.from("cadeau").update({ reserve: user.pseudo }).eq("id", giftId);
+      if (error) throw error;
+      setGifts(prev => prev.map(g => (g.id === giftId ? { ...g, reserve: user.pseudo } : g)));
+    } catch (err) {
+      console.error(err);
+      toast.error("Erreur lors de la réservation");
+    }
   };
 
   const handleUnreserve = async (giftId: string) => {
-    await supabase
-      .from("cadeau")
-      .update({ reserve: null })
-      .eq("id", giftId);
+    try {
+      const { error } = await supabase.from("cadeau").update({ reserve: null }).eq("id", giftId);
+      if (error) throw error;
+      setGifts(prev => prev.map(g => (g.id === giftId ? { ...g, reserve: undefined } : g)));
+    } catch (err) {
+      console.error(err);
+      toast.error("Erreur lors de l'annulation");
+    }
+  };
 
-    setGifts(prev =>
-      prev.map(g => g.id === giftId ? { ...g, reserve: undefined } : g)
-    );
+  const handleDelete = async (giftId: string, titre?: string) => {
+    if (!user?.admin) return;
+    const ok = window.confirm(`Supprimer le cadeau "${titre || ""}" ? Cette action est irréversible.`);
+    if (!ok) return;
+
+    try {
+      const { error } = await supabase.from("cadeau").delete().eq("id", giftId);
+      if (error) throw error;
+      setGifts(prev => prev.filter(g => g.id !== giftId));
+      toast.success("Cadeau supprimé");
+    } catch (err) {
+      console.error(err);
+      toast.error("Erreur lors de la suppression");
+    }
   };
 
   if (gifts.length === 0) {
     return (
       <div className="text-center py-12">
-        <Gift className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
-        <h3 className="text-lg font-semibold text-muted-foreground mb-2">
-          Aucun cadeau pour le moment
-        </h3>
-        <p className="text-muted-foreground">
-          Ajoutez des cadeaux à la liste de naissance pour commencer !
-        </p>
+        <GiftIcon className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
+        <h3 className="text-lg font-semibold text-muted-foreground mb-2">Aucun cadeau pour le moment</h3>
+        <p className="text-muted-foreground">Ajoutez des cadeaux à la liste de naissance pour commencer !</p>
       </div>
     );
   }
 
   return (
-    <div className="grid gap-4 py-8 max-w-6xl mx-auto">
-      <h2 className="text-xl font-semibold text-center">
-        Cadeaux de Naissance ({gifts.length})
-      </h2>
+    <div className="grid gap-4">
+      <h2 className="text-xl font-semibold text-center">Cadeaux de Naissance ({gifts.length})</h2>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {gifts.map(gift => {
-          const canReserve = !!user && !gift.reserve;
-          const canUnreserve = gift.reserve === user?.pseudo;
+        {gifts.map((gift) => (
+          <Card key={gift.id} className={`overflow-hidden transition-all duration-300 ${gift.reserve ? "bg-muted/50 opacity-75" : "bg-white/90 backdrop-blur-sm hover:shadow-lg"}`}>
+            <CardHeader className="pb-3">
+              <CardTitle className="text-lg flex items-start justify-between gap-2">
+                <span className={gift.reserve ? "line-through text-muted-foreground" : ""}>{gift.titre}</span>
+                {gift.reserve && (
+                  <div className="bg-gradient-to-r from-girl-primary to-boy-primary text-black text-xs px-2 py-1 rounded-full">Réservé</div>
+                )}
+              </CardTitle>
+            </CardHeader>
 
-          return (
-            <Card
-              key={gift.id}
-              className={`overflow-hidden transition-all duration-300 ${
-                gift.reserve
-                  ? "bg-muted/50 opacity-75"
-                  : "bg-white/90 backdrop-blur-sm hover:shadow-lg"
-              }`}
-            >
-              <CardHeader className="pb-3">
-                <CardTitle className="text-lg flex items-center justify-between gap-2">
-                  <span className={gift.reserve ? "line-through text-muted-foreground" : ""}>
-                    {gift.titre}
-                  </span>
-                  {gift.reserve && (
-                    <div className="bg-gradient-to-r from-girl-primary to-boy-primary text-primary text-xs px-2 py-1 rounded-full">
-                      Réservé
-                    </div>
-                  )}
-                </CardTitle>
-              </CardHeader>
+            <CardContent className="space-y-4">
+              {gift.desc && <p className="text-muted-foreground text-sm">{gift.desc}</p>}
 
-              <CardContent className="space-y-4">
-                {gift.desc && <p className="text-muted-foreground text-sm">{gift.desc}</p>}
-                <div className="flex items-center justify-between text-sm">
-                  {gift.prix && <span className="font-semibold text-primary">{gift.prix}€</span>}
-                  {gift.link && (
-                    <a
-                      href={gift.link}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-primary hover:text-primary/80 flex items-center gap-1"
-                    >
-                      <ExternalLink className="w-3 h-3" />
-                      Lien vers l'article
-                    </a>
-                  )}
-                </div>
+              <div className="flex items-center justify-between text-sm">
+                {gift.prix && <span className="font-semibold text-primary">{gift.prix}€</span>}
+                {gift.link && (
+                  <a href={gift.link} target="_blank" rel="noopener noreferrer" className="text-primary hover:text-primary/80 flex items-center gap-1">
+                    <ExternalLink className="w-3 h-3" /> Lien vers l'article
+                  </a>
+                )}
+              </div>
 
-                {gift.reserve ? (
-                  <div className="space-y-2">
-                    <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                      <User className="w-4 h-4" />
-                      Réservé par {gift.reserve}
-                    </div>
-                    {canUnreserve && (
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => handleUnreserve(gift.id)}
-                        className="w-full mt-auto bg-gradient-to-r from-girl-primary to-boy-primary"
-                      >
+              {gift.reserve ? (
+                <div className="space-y-2">
+                  <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                    <UserIcon className="w-4 h-4" /> Réservé par {gift.reserve}
+                  </div>
+
+                  <div className="flex gap-2">
+                    {gift.reserve === user?.pseudo && (
+                      <Button variant="outline" size="sm" onClick={() => handleUnreserve(gift.id)} className="flex-1">
                         Annuler la réservation
                       </Button>
                     )}
+
+                    {user?.admin && (
+                      <Button variant="destructive" size="sm" onClick={() => handleDelete(gift.id, gift.titre)} className="flex-1">
+                        <Trash className="w-4 h-4 mr-2" /> Supprimer
+                      </Button>
+                    )}
                   </div>
-                ) : (
-                  <Button
-                    onClick={() => canReserve && handleReserve(gift.id)}
-                    disabled={!canReserve}
-                    className="w-full font-semibold bg-gradient-to-r from-girl to-boy hover:from-girl/90 hover:to-boy/90 text-white border-0 shadow-lg hover:shadow-xl transition-all duration-300"
-                    size="sm"
-                  >
-                    {user ? "Réserver ce cadeau" : "Connectez-vous pour réserver"}
-                  </Button>
-                )}
-              </CardContent>
-            </Card>
-          );
-        })}
+                </div>
+              ) : (
+                <div className="space-y-2">
+                  <div className="flex gap-2">
+                    <Button onClick={() => handleReserve(gift.id)} disabled={!user} className="w-full font-semibold bg-gradient-to-r from-girl to-boy hover:from-girl/90 hover:to-boy/90 text-white border-0 shadow-lg hover:shadow-xl transition-all duration-300" size="sm">
+                      {user ? "Réserver ce cadeau" : "Connectez-vous pour réserver"}
+                    </Button>
+
+                    {user?.admin && (
+                      <Button variant="destructive" size="sm" onClick={() => handleDelete(gift.id, gift.titre)}>
+                        <Trash className="w-4 h-4" />
+                      </Button>
+                    )}
+                  </div>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        ))}
       </div>
     </div>
   );

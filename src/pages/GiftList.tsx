@@ -23,7 +23,7 @@ const GiftListPage = () => {
       .order("created_at", { ascending: false });
 
     if (error) console.error("Erreur lors du chargement des cadeaux :", error);
-    else if (data) setGifts(data);
+    else if (data) setGifts(data as GiftType[]);
 
     setLoading(false);
   };
@@ -45,52 +45,40 @@ const GiftListPage = () => {
 
     if (error) console.error("Erreur lors de l'ajout du cadeau :", error);
     else if (data) {
-      setGifts(prev => [data[0], ...prev]);
+      setGifts((prev) => [data[0], ...prev]);
       setShowForm(false);
     }
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-r from-girl-secondary via-background to-boy-secondary">
-      {/* Header */}
-      <header className="sticky top-0 bg-card/80 backdrop-blur-md border-b z-40">
-        <div className="max-w-7xl mx-auto px-4 py-4">
-          <div className="flex justify-between items-center">
-            <Navigation />
-            <div className="flex items-center gap-4">
-              {user?.admin && (
-                <Button 
-                  onClick={() => setShowForm(true)} 
-                  size="sm"
-                  className="flex items-center gap-2 bg-gradient-to-r from-girl to-boy text-white"
-                >
-                  <Plus className="w-4 h-4" />
-                  Ajouter
-                </Button>
-              )}
-              {user ? <UserProfile /> : <AuthButtons />}
-            </div>
-          </div>
+    <div className="min-h-screen bg-background p-4 bg-gradient-to-r from-girl-secondary via-background to-boy-secondary">
+      <header className="max-w-7xl mx-auto flex items-center justify-between mb-8">
+        <div className="flex items-center gap-3">
+          <Button variant="ghost" onClick={() => window.history.back()}>
+            ←
+          </Button>
+          <h1 className="text-2xl font-bold bg-gradient-to-r from-girl-primary to-boy-primary bg-clip-text text-black">
+            <Gift className="inline w-5 h-5 mr-2" /> Liste de Naissance
+          </h1>
+        </div>
+
+        <div className="flex items-center gap-4">
+          <UserProfile />
+          <AuthButtons />
         </div>
       </header>
 
-      {/* Title Section */}
-      <div className="text-center py-8 px-4">
-        <div className="max-w-7xl mx-auto mb-6">
-          <div className="flex items-center justify-center gap-3 mb-4">
-            <Gift className="w-8 h-8 text-girl" />
-            <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-girl to-boy bg-clip-text text-transparent">
-              Liste de Naissance
-            </h1>
-            <Heart className="w-8 h-8 text-boy" />
-          </div>
-          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            Découvrez les cadeaux souhaités pour l'arrivée de bébé et réservez celui qui vous fait plaisir !
-          </p>
-        </div>
-      </div>
-
       <div className="max-w-6xl mx-auto px-4">
+        {/* Move the Add button on the page (admin only) */}
+        {user?.admin && (
+          <div className="mb-6 flex justify-end">
+            <Button onClick={() => setShowForm(true)} className="flex items-center gap-2 bg-gradient-to-r from-girl to-boy text-white">
+              <Plus className="w-4 h-4" />
+              Ajouter un cadeau
+            </Button>
+          </div>
+        )}
+
         {showForm && <GiftForm onSubmit={handleAddGift} onCancel={() => setShowForm(false)} />}
 
         {loading ? (
@@ -103,13 +91,15 @@ const GiftListPage = () => {
                 <div className="text-3xl font-bold text-foreground">{gifts.length}</div>
                 <div className="text-muted-foreground">Cadeaux au total</div>
               </div>
+
               <div className="bg-gradient-to-br from-girl-secondary to-girl-accent rounded-2xl p-6 text-center shadow-lg">
-                <div className="text-3xl font-bold text-girl">{gifts.filter(g => g.reserve && g.reserve.trim() !== "").length}</div>
-                <div className="text-girl/70">Réservés</div>
+                <div className="text-3xl font-bold text-girl-primary">{gifts.filter(g => g.reserve && g.reserve.trim() !== "").length}</div>
+                <div className="text-girl-primary/70">Réservés</div>
               </div>
+
               <div className="bg-gradient-to-br from-boy-secondary to-boy-accent rounded-2xl p-6 text-center shadow-lg">
-                <div className="text-3xl font-bold text-boy">{gifts.length - gifts.filter(g => g.reserve && g.reserve.trim() !== "").length}</div>
-                <div className="text-boy/70">Disponibles</div>
+                <div className="text-3xl font-bold text-boy-primary">{gifts.filter(g => !g.reserve || g.reserve.trim() === "").length}</div>
+                <div className="text-boy-primary/70">Disponibles</div>
               </div>
             </div>
 

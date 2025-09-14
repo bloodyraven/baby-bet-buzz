@@ -42,7 +42,7 @@ export const GiftForm = ({ onSubmit, onCancel }: GiftFormProps) => {
     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
       <div className="bg-white rounded-2xl p-6 w-full max-w-md shadow-2xl">
         <div className="flex items-center justify-between mb-6">
-          <h2 className="text-xl font-bold bg-gradient-to-r from-girl-primary to-boy-primary bg-clip-text text-transparent">
+          <h2 className="text-xl font-bold bg-gradient-to-r from-girl-primary to-boy-primary bg-clip-text text-black">
             Nouveau Cadeau
           </h2>
           <Button variant="ghost" size="sm" onClick={onCancel}>
@@ -108,7 +108,7 @@ export const GiftForm = ({ onSubmit, onCancel }: GiftFormProps) => {
             </Button>
             <Button
               type="submit"
-              className="flex-1 bg-gradient-to-r from-girl-primary to-boy-primary hover:from-girl-primary/90 hover:to-boy-primary/90 text-white"
+              className="flex-1 bg-gradient-to-r from-girl-primary to-boy-primary hover:from-girl-primary/90 hover:to-boy-primary/90 text-black"
             >
               Ajouter
             </Button>
