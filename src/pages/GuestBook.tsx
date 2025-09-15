@@ -1,7 +1,8 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { Navigation } from "@/components/Navigation";
 import { AuthButtons } from "@/components/AuthButtons";
 import { UserProfile } from "@/components/UserProfile";
@@ -25,6 +26,10 @@ const GuestBook = () => {
   const [isPrivate, setIsPrivate] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [editingEntry, setEditingEntry] = useState<GuestBookEntry | null>(null);
+
+  // NEW state for filters
+  const [search, setSearch] = useState("");
+  const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
 
   useEffect(() => {
     fetchEntries();
@@ -129,6 +134,28 @@ const GuestBook = () => {
     }
   };
 
+  // Filtrage + tri
+  const filteredEntries = useMemo(() => {
+    let result = [...entries];
+
+    if (search.trim()) {
+      const lower = search.toLowerCase();
+      result = result.filter(
+        (e) =>
+          e.name.toLowerCase().includes(lower) ||
+          e.message.toLowerCase().includes(lower)
+      );
+    }
+
+    result.sort((a, b) => {
+      const da = new Date(a.created_at).getTime();
+      const db = new Date(b.created_at).getTime();
+      return sortOrder === "asc" ? da - db : db - da;
+    });
+
+    return result;
+  }, [entries, search, sortOrder]);
+
   return (
     <div className="min-h-screen bg-gradient-to-r from-girl-secondary via-background to-boy-secondary">
       {/* Header */}
@@ -216,10 +243,27 @@ const GuestBook = () => {
           </p>
         )}
 
+        {/* Filtres */}
+        <div className="mb-6 flex flex-col md:flex-row gap-4 justify-between">
+          <Input
+            placeholder="Rechercher par nom ou message..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+          />
+          <select
+            value={sortOrder}
+            onChange={(e) => setSortOrder(e.target.value as "asc" | "desc")}
+            className="border rounded px-3 py-2"
+          >
+            <option value="desc">Date décroissante</option>
+            <option value="asc">Date croissante</option>
+          </select>
+        </div>
+
         {/* Liste des messages */}
         <div className="space-y-6">
-          {entries.length > 0 ? (
-            entries.map((entry) => {
+          {filteredEntries.length > 0 ? (
+            filteredEntries.map((entry) => {
               const canView =
                 !entry.is_private ||
                 (user && (user.admin || user.pseudo === entry.name));

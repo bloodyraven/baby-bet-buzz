@@ -67,16 +67,14 @@ export const GiftsList = ({ gifts, supabase, setGifts }: GiftsListProps) => {
     return (
       <div className="text-center py-12">
         <GiftIcon className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
-        <h3 className="text-lg font-semibold text-muted-foreground mb-2">Aucun cadeau pour le moment</h3>
-        <p className="text-muted-foreground">Ajoutez des cadeaux à la liste de naissance pour commencer !</p>
+        <h3 className="text-lg font-semibold text-muted-foreground mb-2">Aucun cadeau ne correspond à la recherche</h3>
+        <p className="text-muted-foreground">Contactez nous si besoin !</p>
       </div>
     );
   }
 
   return (
     <div className="grid gap-4">
-      <h2 className="text-xl font-semibold text-center">Cadeaux de Naissance ({gifts.length})</h2>
-
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {gifts.map((gift) => (
           <Card key={gift.id} className={`overflow-hidden transition-all duration-300 ${gift.reserve ? "bg-muted/50 opacity-75" : "bg-white/90 backdrop-blur-sm hover:shadow-lg"}`}>
