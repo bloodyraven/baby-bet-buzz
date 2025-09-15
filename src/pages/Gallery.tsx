@@ -7,10 +7,11 @@ import { Textarea } from "@/components/ui/textarea";
 import { Navigation } from "@/components/Navigation";
 import { AuthButtons } from "@/components/AuthButtons";
 import { UserProfile } from "@/components/UserProfile";
-import { Camera, Heart, Upload, Image as ImageIcon, Calendar } from "lucide-react";
+import { Camera, Heart, Upload, Image as ImageIcon, Calendar, Trash } from "lucide-react";
 import { useUser } from "@/context/UserContext";
 import { supabase } from "@/lib/supabaseClient";
 import { toast } from "sonner";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 interface Photo {
   id: string;
@@ -21,9 +22,17 @@ interface Photo {
   created_at: string;
 }
 
+interface Like {
+  id: string;
+  photo_id: string;
+  user_id: string;
+  user: { pseudo: string };
+}
+
 const Gallery = () => {
   const { user } = useUser();
   const [photos, setPhotos] = useState<Photo[]>([]);
+  const [likes, setLikes] = useState<Record<string, Like[]>>({});
   const [selectedPhoto, setSelectedPhoto] = useState<Photo | null>(null);
   const [newPhoto, setNewPhoto] = useState({
     title: "",
@@ -48,6 +57,36 @@ const Gallery = () => {
       toast.error("Erreur lors du chargement des photos");
     } else if (data) {
       setPhotos(data);
+      // charger aussi les likes
+      fetchLikes(data.map((p) => p.id));
+    }
+  };
+
+  const fetchLikes = async (photoIds: string[]) => {
+    const { data, error } = await supabase
+      .from("photo_likes")
+      .select(
+        `
+        id,
+        photo_id,
+        user_id,
+        user:user_id(pseudo)
+      `
+      )
+      .in("photo_id", photoIds);
+
+    if (error) {
+      console.error("Erreur lors du chargement des likes:", error);
+    } else if (data) {
+      const typedLikes = data as unknown as Like[];
+
+      const grouped = typedLikes.reduce((acc: Record<string, Like[]>, like: Like) => {
+        if (!acc[like.photo_id]) acc[like.photo_id] = [];
+        acc[like.photo_id].push(like);
+        return acc;
+      }, {});
+
+      setLikes(grouped);
     }
   };
 
@@ -61,12 +100,14 @@ const Gallery = () => {
     setIsUploading(true);
     const { data, error } = await supabase
       .from("gallery")
-      .insert([{
-        title: newPhoto.title.trim(),
-        description: newPhoto.description.trim(),
-        image_url: newPhoto.image_url.trim(),
-        week_number: parseInt(newPhoto.week_number)
-      }])
+      .insert([
+        {
+          title: newPhoto.title.trim(),
+          description: newPhoto.description.trim(),
+          image_url: newPhoto.image_url.trim(),
+          week_number: parseInt(newPhoto.week_number)
+        }
+      ])
       .select()
       .single();
 
@@ -79,6 +120,111 @@ const Gallery = () => {
       toast.success("Photo ajoutée avec succès !");
     }
     setIsUploading(false);
+  };
+
+  const handleDeletePhoto = async (photoId: string) => {
+    if (!confirm("Voulez-vous vraiment supprimer cette photo ?")) return;
+
+    const { error } = await supabase.from("gallery").delete().eq("id", photoId);
+
+    if (error) {
+      console.error("Erreur lors de la suppression de la photo:", error);
+      toast.error("Erreur lors de la suppression de la photo");
+    } else {
+      setPhotos((prev) => prev.filter((p) => p.id !== photoId));
+      toast.success("Photo supprimée avec succès !");
+    }
+  };
+
+  const toggleLike = async (photoId: string) => {
+    if (!user) {
+      toast.error("Vous devez être connecté pour liker une photo.");
+      return;
+    }
+
+    const alreadyLiked = likes[photoId]?.some((l) => l.user_id === user.id);
+
+    if (alreadyLiked) {
+      // unlike
+      const { error } = await supabase
+        .from("photo_likes")
+        .delete()
+        .eq("photo_id", photoId)
+        .eq("user_id", user.id);
+
+      if (error) {
+        console.error("Erreur lors du unlike:", error);
+        toast.error("Impossible d'annuler le like");
+      } else {
+        setLikes((prev) => ({
+          ...prev,
+          [photoId]: prev[photoId].filter((l) => l.user_id !== user.id)
+        }));
+      }
+    } else {
+      // like
+      const { data, error } = await supabase
+        .from("photo_likes")
+        .insert([{ photo_id: photoId, user_id: user.id }])
+        .select(
+          `
+          id,
+          photo_id,
+          user_id,
+          user:user_id(pseudo)
+        `
+        )
+        .single();
+
+      if (error) {
+        console.error("Erreur lors du like:", error);
+        toast.error("Impossible de liker");
+      } else if (data) {
+        const normalized: Like = {
+          id: data.id,
+          photo_id: data.photo_id,
+          user_id: data.user_id,
+          user: Array.isArray(data.user) ? data.user[0] : data.user, // récupère le premier élément
+        };
+      
+        setLikes((prev) => ({
+          ...prev,
+          [photoId]: [...(prev[photoId] || []), normalized],
+        }));
+      }
+    }
+  };
+
+  const renderLikeButton = (photoId: string) => {
+    const photoLikes = likes[photoId] || [];
+    const userLiked = user ? photoLikes.some((l) => l.user_id === user.id) : false;
+
+    return (
+      <TooltipProvider>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Button
+              variant={userLiked ? "default" : "outline"}
+              size="sm"
+              onClick={() => toggleLike(photoId)}
+              className="flex items-center gap-1"
+            >
+              <Heart className={`w-4 h-4 ${userLiked ? "text-red-500 fill-red-500" : ""}`} />
+              <span>{photoLikes.length}</span>
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent>
+            {photoLikes.length > 0 ? (
+              <div className="text-sm">
+                {photoLikes.map((l) => l.user.pseudo).join(", ")}
+              </div>
+            ) : (
+              <span>Aucun like pour le moment</span>
+            )}
+          </TooltipContent>
+        </Tooltip>
+      </TooltipProvider>
+    );
   };
 
   return (
@@ -167,8 +313,8 @@ const Gallery = () => {
                     className="min-h-[80px]"
                   />
                 </div>
-                <Button 
-                  type="submit" 
+                <Button
+                  type="submit"
                   disabled={isUploading}
                   className="w-full bg-gradient-to-r from-girl to-boy hover:from-girl/90 hover:to-boy/90"
                 >
@@ -184,32 +330,42 @@ const Gallery = () => {
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
           {photos.length > 0 ? (
             photos.map((photo) => (
-              <Card 
-                key={photo.id} 
+              <Card
+                key={photo.id}
                 className="bg-card/80 backdrop-blur-sm border-0 shadow-md hover:shadow-lg transition-all cursor-pointer overflow-hidden"
-                onClick={() => setSelectedPhoto(photo)}
               >
                 <div className="aspect-square relative overflow-hidden">
                   <img
                     src={photo.image_url}
                     alt={photo.title}
                     className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+                    onClick={() => setSelectedPhoto(photo)}
                   />
                   <div className="absolute top-2 right-2 bg-black/70 text-white px-2 py-1 rounded-full text-xs flex items-center gap-1">
                     <Calendar className="w-3 h-3" />
                     {photo.week_number}SA
                   </div>
                 </div>
-                <CardContent className="pt-4">
-                  <h3 className="font-semibold mb-2">{photo.title}</h3>
+                <CardContent className="pt-4 flex flex-col gap-2">
+                  <h3 className="font-semibold">{photo.title}</h3>
                   {photo.description && (
-                    <p className="text-sm text-muted-foreground line-clamp-2">
-                      {photo.description}
-                    </p>
+                    <p className="text-sm text-muted-foreground line-clamp-2">{photo.description}</p>
                   )}
-                  <p className="text-xs text-muted-foreground mt-2">
-                    {new Date(photo.created_at).toLocaleDateString("fr-FR")}
-                  </p>
+                  <div className="flex items-center justify-between">
+                    {renderLikeButton(photo.id)}
+                    {user?.admin && (
+                      <Button
+                        variant="destructive"
+                        size="sm"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleDeletePhoto(photo.id);
+                        }}
+                      >
+                        <Trash className="w-4 h-4" />
+                      </Button>
+                    )}
+                  </div>
                 </CardContent>
               </Card>
             ))
@@ -229,11 +385,14 @@ const Gallery = () => {
 
         {/* Photo Modal */}
         {selectedPhoto && (
-          <div 
+          <div
             className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4"
             onClick={() => setSelectedPhoto(null)}
           >
-            <div className="max-w-4xl max-h-full bg-card rounded-lg overflow-hidden" onClick={(e) => e.stopPropagation()}>
+            <div
+              className="max-w-4xl max-h-full bg-card rounded-lg overflow-hidden"
+              onClick={(e) => e.stopPropagation()}
+            >
               <div className="relative">
                 <img
                   src={selectedPhoto.image_url}
@@ -249,7 +408,7 @@ const Gallery = () => {
                   ✕
                 </Button>
               </div>
-              <div className="p-6">
+              <div className="p-6 space-y-4">
                 <div className="flex items-center gap-2 mb-2">
                   <h2 className="text-xl font-bold">{selectedPhoto.title}</h2>
                   <span className="bg-gradient-to-r from-girl-secondary to-boy-secondary text-primary-foreground px-2 py-1 rounded-full text-sm">
@@ -260,12 +419,26 @@ const Gallery = () => {
                   <p className="text-muted-foreground mb-4">{selectedPhoto.description}</p>
                 )}
                 <p className="text-sm text-muted-foreground">
-                  Ajouté le {new Date(selectedPhoto.created_at).toLocaleDateString("fr-FR", {
+                  Ajouté le{" "}
+                  {new Date(selectedPhoto.created_at).toLocaleDateString("fr-FR", {
                     day: "numeric",
                     month: "long",
                     year: "numeric"
                   })}
                 </p>
+                <div className="flex items-center justify-between">
+                  {renderLikeButton(selectedPhoto.id)}
+                  {user?.admin && (
+                    <Button
+                      variant="destructive"
+                      size="sm"
+                      onClick={() => handleDeletePhoto(selectedPhoto.id)}
+                    >
+                      <Trash className="w-4 h-4" />
+                      Supprimer
+                    </Button>
+                  )}
+                </div>
               </div>
             </div>
           </div>
