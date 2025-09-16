@@ -1,6 +1,7 @@
 import { Navigation } from "@/components/Navigation";
 import { UserProfile } from "@/components/UserProfile";
 import { AuthButtons } from "@/components/AuthButtons";
+import { Footer } from "@/components/Footer";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Baby, Calendar, Trophy, Users, Heart, Crown } from "lucide-react";
@@ -153,6 +154,8 @@ const Results = () => {
           </CardContent>
         </Card>
       </div>
+
+      <Footer />
     </div>
   );
 };

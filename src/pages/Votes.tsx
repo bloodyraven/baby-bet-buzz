@@ -5,6 +5,7 @@ import { VoteStats } from "@/components/VoteStats";
 import { AuthButtons } from "@/components/AuthButtons";
 import { UserProfile } from "@/components/UserProfile";
 import { Navigation } from "@/components/Navigation";
+import { Footer } from "@/components/Footer";
 import { Baby, Heart, Eye, EyeOff } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/lib/supabaseClient";
@@ -178,6 +179,8 @@ const Votes = () => {
           </Button>
         </div>
       )}
+
+      <Footer />
     </div>
   );
 };

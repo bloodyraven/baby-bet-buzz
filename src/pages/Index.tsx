@@ -1,6 +1,7 @@
 import { AuthButtons } from "@/components/AuthButtons";
 import { UserProfile } from "@/components/UserProfile";
 import { Navigation } from "@/components/Navigation";
+import { Footer } from "@/components/Footer";
 import { Baby, Gift, BookOpen, Camera, Heart, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -32,8 +33,8 @@ const Index = () => {
       description: "Partagez vos félicitations, conseils et messages d'amour pour cette nouvelle aventure.",
       icon: BookOpen,
       href: "/livre-or",
-      gradient: "from-secondary to-accent",
-      bgGradient: "from-secondary/10 to-accent/5"
+      gradient: "from-girl-primary to-primary",
+      bgGradient: "from-girl-accent/30 to-primary/10"
     },
     {
       title: "Galerie Photo",
@@ -59,19 +60,6 @@ const Index = () => {
         </div>
       </header>
 
-      {/* Registration Invitation */}
-      <div className="max-w-4xl mx-auto px-4 mb-8">
-        <div className="bg-gradient-to-r from-girl-accent to-boy-accent rounded-3xl p-6 border-2 border-dashed border-girl/20">
-          <div className="text-center">
-            <h2 className="text-2xl font-bold text-foreground mb-3">Inscription Requise</h2>
-            <p className="text-muted-foreground mb-4">
-              Pour participer au concours, laisser des messages dans le livre d'or et réserver des cadeaux, vous devez vous inscrire sur le site. C'est rapide et gratuit !
-            </p>
-            {!user && <AuthButtons />}
-          </div>
-        </div>
-      </div>
-
       {/* Hero Section */}
       <div className="text-center py-8 px-4">
         <div className="max-w-4xl mx-auto">
@@ -85,6 +73,19 @@ const Index = () => {
           <p className="text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
             Bienvenue dans notre univers d'attente et de bonheur ! Découvrez toutes les façons de partager cette aventure extraordinaire avec nous.
           </p>
+        </div>
+      </div>
+
+      {/* Registration Invitation */}
+      <div className="max-w-4xl mx-auto px-4 mb-8">
+        <div className="bg-gradient-to-r from-girl-accent to-boy-accent rounded-3xl p-6 border-2 border-dashed border-girl/20">
+          <div className="text-center">
+            <h2 className="text-2xl font-bold text-foreground mb-3">Inscription Requise</h2>
+            <p className="text-muted-foreground mb-4">
+              Pour participer au concours, laisser des messages dans le livre d'or et réserver des cadeaux, vous devez vous inscrire sur le site. C'est rapide et gratuit !
+            </p>
+            {!user && <AuthButtons />}
+          </div>
         </div>
       </div>
 
@@ -121,6 +122,7 @@ const Index = () => {
         </div>
       </div>
 
+      <Footer />
     </div>
   );
 };

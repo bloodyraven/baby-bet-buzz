@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Navigation } from "@/components/Navigation";
 import { AuthButtons } from "@/components/AuthButtons";
 import { UserProfile } from "@/components/UserProfile";
+import { Footer } from "@/components/Footer";
 import { useUser } from "@/context/UserContext";
 import { supabase } from "@/lib/supabaseClient";
 import { toast } from "sonner";
@@ -327,6 +328,8 @@ const GuestBook = () => {
           )}
         </div>
       </main>
+
+      <Footer />
     </div>
   );
 };

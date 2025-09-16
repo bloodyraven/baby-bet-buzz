@@ -7,6 +7,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Navigation } from "@/components/Navigation";
 import { AuthButtons } from "@/components/AuthButtons";
 import { UserProfile } from "@/components/UserProfile";
+import { Footer } from "@/components/Footer";
 import { Camera, Heart, Upload, Image as ImageIcon, Calendar, Trash } from "lucide-react";
 import { useUser } from "@/context/UserContext";
 import { supabase } from "@/lib/supabaseClient";
@@ -444,6 +445,8 @@ const Gallery = () => {
           </div>
         )}
       </main>
+
+      <Footer />
     </div>
   );
 };

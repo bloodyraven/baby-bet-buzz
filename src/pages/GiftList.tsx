@@ -8,6 +8,7 @@ import { useUser } from "@/context/UserContext";
 import { AuthButtons } from "@/components/AuthButtons";
 import { UserProfile } from "@/components/UserProfile";
 import { Navigation } from "@/components/Navigation";
+import { Footer } from "@/components/Footer";
 
 const GiftListPage = () => {
   const [gifts, setGifts] = useState<GiftType[]>([]);
@@ -190,6 +191,8 @@ const GiftListPage = () => {
           </>
         )}
       </main>
+
+      <Footer />
     </div>
   );
 };
