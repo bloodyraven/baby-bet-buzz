@@ -77,17 +77,21 @@ const Index = () => {
       </div>
 
       {/* Registration Invitation */}
-      <div className="max-w-4xl mx-auto px-4 mb-8">
-        <div className="bg-gradient-to-r from-girl-accent to-boy-accent rounded-3xl p-6 border-2 border-dashed border-girl/20">
-          <div className="text-center">
-            <h2 className="text-2xl font-bold text-foreground mb-3">Inscription Requise</h2>
-            <p className="text-muted-foreground mb-4">
-              Pour participer au concours, laisser des messages dans le livre d'or et réserver des cadeaux, vous devez vous inscrire sur le site. C'est rapide et gratuit !
-            </p>
-            {!user && <AuthButtons />}
+      {user ? "" :
+        <div className="max-w-4xl mx-auto px-4 mb-8">
+          <div className="bg-gradient-to-r from-girl-accent to-boy-accent rounded-3xl p-6 border-2 border-dashed border-girl/20">
+            <div className="text-center">
+              <h2 className="text-2xl font-bold text-foreground mb-3">Inscription Requise</h2>
+              <p className="text-muted-foreground mb-4">
+                Pour participer au concours, laisser des messages dans le livre d'or et réserver des cadeaux, vous devez vous inscrire sur le site. C'est rapide et gratuit !
+              </p>
+                <div className="flex items-center justify-center">
+                  {!user && <AuthButtons />}
+                </div>
+            </div>
           </div>
         </div>
-      </div>
+      }
 
       {/* Sections Grid */}
       <div className="max-w-6xl mx-auto px-4 pb-16">
