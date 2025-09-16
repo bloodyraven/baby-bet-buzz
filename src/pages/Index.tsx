@@ -59,12 +59,25 @@ const Index = () => {
         </div>
       </header>
 
+      {/* Registration Invitation */}
+      <div className="max-w-4xl mx-auto px-4 mb-8">
+        <div className="bg-gradient-to-r from-girl-accent to-boy-accent rounded-3xl p-6 border-2 border-dashed border-girl/20">
+          <div className="text-center">
+            <h2 className="text-2xl font-bold text-foreground mb-3">Inscription Requise</h2>
+            <p className="text-muted-foreground mb-4">
+              Pour participer au concours, laisser des messages dans le livre d'or et réserver des cadeaux, vous devez vous inscrire sur le site. C'est rapide et gratuit !
+            </p>
+            {!user && <AuthButtons />}
+          </div>
+        </div>
+      </div>
+
       {/* Hero Section */}
-      <div className="text-center py-12 px-4">
+      <div className="text-center py-8 px-4">
         <div className="max-w-4xl mx-auto">
           <div className="flex items-center justify-center gap-3 mb-6">
             <Heart className="w-10 h-10 text-girl" />
-            <h1 className="text-5xl md:text-7xl font-bold bg-gradient-to-r from-girl to-boy bg-clip-text text-transparent">
+            <h1 className="text-5xl md:text-7xl font-bold font-quicksand bg-gradient-to-r from-girl to-boy bg-clip-text text-transparent">
               Baby Duj
             </h1>
             <Heart className="w-10 h-10 text-boy" />
@@ -108,26 +121,6 @@ const Index = () => {
         </div>
       </div>
 
-      {/* Call to Action */}
-      <div className="max-w-4xl mx-auto px-4 pb-16 text-center">
-        <div className="bg-gradient-to-r from-girl-accent to-boy-accent rounded-3xl p-8 text-white">
-          <h2 className="text-3xl font-bold mb-4">Prêt à participer ?</h2>
-          <p className="text-lg mb-6 opacity-90">
-            Commencez par voter pour votre prédiction, puis explorez le reste !
-          </p>
-          <Button 
-            asChild 
-            size="lg" 
-            variant="secondary"
-            className="bg-white text-primary hover:bg-white/90"
-          >
-            <Link to="/votes" className="flex items-center gap-2">
-              <Baby className="w-5 h-5" />
-              Faire ma prédiction
-            </Link>
-          </Button>
-        </div>
-      </div>
     </div>
   );
 };

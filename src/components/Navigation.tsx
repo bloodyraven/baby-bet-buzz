@@ -30,6 +30,12 @@ const Navigation = () => {
       description: "Votez pour deviner le genre du bébé"
     },
     {
+      title: "Résultats",
+      href: "/resultats",
+      icon: Baby,
+      description: "Découvrez les résultats du concours"
+    },
+    {
       title: "Liste de Naissance",
       href: "/cadeaux",
       icon: Gift,
@@ -53,9 +59,10 @@ const Navigation = () => {
     <>
       {/* Desktop Navigation */}
       <div className="hidden md:block">
-        <NavigationMenu>
-          <NavigationMenuList>
-            <NavigationMenuItem>
+        <div className="flex items-center gap-6">
+          <NavigationMenu>
+            <NavigationMenuList>
+              <NavigationMenuItem>
               <NavigationMenuTrigger className="bg-gradient-to-r from-girl-secondary/20 to-boy-secondary/20 hover:from-girl-secondary/30 hover:to-boy-secondary/30 data-[state=open]:from-girl-secondary/30 data-[state=open]:to-boy-secondary/30">
                 Navigation
               </NavigationMenuTrigger>
@@ -86,9 +93,15 @@ const Navigation = () => {
                   ))}
                 </ul>
               </NavigationMenuContent>
-            </NavigationMenuItem>
-          </NavigationMenuList>
-        </NavigationMenu>
+              </NavigationMenuItem>
+            </NavigationMenuList>
+          </NavigationMenu>
+          
+          {/* Central Logo */}
+          <NavLink to="/" className="font-quicksand font-bold text-2xl bg-gradient-to-r from-girl to-boy bg-clip-text text-transparent hover:scale-105 transition-transform">
+            Baby Duj
+          </NavLink>
+        </div>
       </div>
 
       {/* Mobile Navigation */}
