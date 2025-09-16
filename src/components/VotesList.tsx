@@ -1,4 +1,4 @@
-import { Vote } from "@/pages/Index";
+import { Vote } from "@/pages/Votes";
 import { Clock, User } from "lucide-react";
 
 interface VotesListProps {

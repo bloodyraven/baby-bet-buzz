@@ -18,8 +18,14 @@ const Navigation = () => {
 
   const navigationItems = [
     {
-      title: "Votes",
+      title: "Accueil",
       href: "/",
+      icon: Baby,
+      description: "Page d'accueil et présentation du site"
+    },
+    {
+      title: "Votes",
+      href: "/votes",
       icon: Baby,
       description: "Votez pour deviner le genre du bébé"
     },

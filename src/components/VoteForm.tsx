@@ -4,13 +4,7 @@ import { Card } from "@/components/ui/card";
 import { toast } from "sonner";
 import { useUser } from "@/context/UserContext";
 import type { SupabaseClient } from "@supabase/supabase-js";
-
-export interface Vote {
-  id: string;
-  name: string;
-  gender: "girl" | "boy";
-  created_at: string;
-}
+import { Vote } from "@/pages/Votes";
 
 interface VoteFormProps {
   supabase: SupabaseClient;
