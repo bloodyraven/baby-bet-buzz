@@ -106,15 +106,24 @@ const Navigation = () => {
 
       {/* Mobile Navigation */}
       <div className="md:hidden">
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-          className="flex items-center gap-2"
-        >
-          {isMobileMenuOpen ? <X className="w-4 h-4" /> : <Menu className="w-4 h-4" />}
-          Menu
-        </Button>
+        <div className="flex items-center justify-between w-full">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+            className="flex items-center gap-2"
+          >
+            {isMobileMenuOpen ? <X className="w-4 h-4" /> : <Menu className="w-4 h-4" />}
+            Menu
+          </Button>
+          
+          {/* Central Logo for Mobile */}
+          <NavLink to="/" className="font-quicksand font-bold text-xl bg-gradient-to-r from-girl to-boy bg-clip-text text-transparent">
+            Baby Duj
+          </NavLink>
+          
+          <div className="w-16"></div> {/* Spacer for balance */}
+        </div>
 
         {isMobileMenuOpen && (
           <div className="absolute top-full left-0 right-0 bg-card/95 backdrop-blur-md border-b shadow-lg z-50">

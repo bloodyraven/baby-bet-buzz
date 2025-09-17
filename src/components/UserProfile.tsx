@@ -44,7 +44,7 @@ const UserProfile = () => {
             <div className="flex items-center gap-2">
               <span className="font-semibold text-sm">{user.pseudo}</span>
               {user.admin && (
-                <Badge variant="secondary" className="h-5 px-2 text-xs bg-gradient-to-r from-girl to-boy text-white">
+                <Badge variant="secondary" className="hidden md:flex h-5 px-2 text-xs bg-gradient-to-r from-girl to-boy text-white">
                   <Crown className="w-3 h-3 mr-1" />
                   Admin
                 </Badge>
