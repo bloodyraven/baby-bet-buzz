@@ -102,7 +102,7 @@ const Votes = () => {
 
       {/* Vote Form */}
       <div className="max-w-4xl mx-auto px-4 mb-12">
-        <VoteForm supabase={supabase} votes={votes} setVotes={setVotes} hasVoted={hasVoted}/>
+        <VoteForm supabase={supabase} votes={votes} setVotes={setVotes} hasVoted={hasVoted} setShowResults={setShowResults}/>
       </div>
 
       {/* Results Section */}

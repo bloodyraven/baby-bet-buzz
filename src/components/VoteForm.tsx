@@ -12,9 +12,10 @@ interface VoteFormProps {
   votes: Vote[];
   setVotes: (votes: Vote[]) => void;
   hasVoted: boolean;
+  setShowResults: (show: boolean) => void;
 }
 
-export const VoteForm = ({ supabase, votes, setVotes, hasVoted }: VoteFormProps) => {
+export const VoteForm = ({ supabase, votes, setVotes, hasVoted, setShowResults }: VoteFormProps) => {
   const { user } = useUser();
   const [selectedGender, setSelectedGender] = useState<"girl" | "boy" | null>(null);
 
@@ -71,6 +72,7 @@ export const VoteForm = ({ supabase, votes, setVotes, hasVoted }: VoteFormProps)
     }
 
     await fetchVotes(); // Recharge la liste
+    setShowResults(true); // Affiche les résultats après le vote
   };
 
   return (
