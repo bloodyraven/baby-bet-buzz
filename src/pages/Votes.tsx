@@ -14,7 +14,8 @@ import { useUser } from "@/context/UserContext";
 // Typage aligné avec ta table Supabase
 export interface Vote {
   id: string;
-  name: string;
+  nom: string;
+  prenom: string;
   gender: "girl" | "boy";
   created_at: string; // timestamp Supabase
 }
@@ -38,7 +39,7 @@ const Votes = () => {
       } else if (data) {
         setVotes(data);
         if (user) {
-          const voted = data.some((v) => v.name === user.pseudo);
+          const voted = data.some((v) => v.nom === user.nom && v.prenom === user.pseudo);
           setHasVoted(voted);
           if (voted) setShowResults(true);
         }
@@ -49,12 +50,12 @@ const Votes = () => {
   }, [user]);
 
   // Ajouter un vote dans Supabase
-  const handleVote = async (name: string, gender: "girl" | "boy") => {
-    await supabase.from("vote").delete().eq("name", name);
+  const handleVote = async (nom: string, prenom: string, gender: "girl" | "boy") => {
+    await supabase.from("vote").delete().eq("nom", nom).eq("prenom", prenom);
 
     const { data, error } = await supabase
       .from("vote")
-      .insert([{ name, gender }])
+      .insert([{ nom, prenom, gender }])
       .select();
 
     if (error) {

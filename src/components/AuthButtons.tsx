@@ -15,17 +15,17 @@ import { useUser } from "@/context/UserContext";
 
 const AuthButtons = () => {
   const { user, login, signup, logout } = useUser();
-  const [loginData, setLoginData] = useState({ pseudo: "", code: "" });
-  const [signupData, setSignupData] = useState({ pseudo: "", code: "", confirmCode: "" });
+  const [loginData, setLoginData] = useState({ pseudo: "", nom: "", code: "" });
+  const [signupData, setSignupData] = useState({ pseudo: "", nom : "", code: "", confirmCode: "" });
   const [isLoginOpen, setIsLoginOpen] = useState(false);
   const [isSignupOpen, setIsSignupOpen] = useState(false);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      await login(loginData.pseudo, loginData.code);
+      await login(loginData.pseudo, loginData.nom, loginData.code);
       setIsLoginOpen(false);
-      setLoginData({ pseudo: "", code: "" });
+      setLoginData({ pseudo: "", nom:"", code: "" });
     } catch (err: any) {
       alert(err.message);
     }
@@ -38,9 +38,9 @@ const AuthButtons = () => {
       return;
     }
     try {
-      await signup(signupData.pseudo, signupData.code);
+      await signup(signupData.pseudo, loginData.nom, signupData.code);
       setIsSignupOpen(false);
-      setSignupData({ pseudo: "", code: "", confirmCode: "" });
+      setSignupData({ pseudo: "", nom: "", code: "", confirmCode: "" });
     } catch (err: any) {
       alert(err.message);
     }
@@ -70,12 +70,22 @@ const AuthButtons = () => {
           </DialogHeader>
           <form onSubmit={handleLogin} className="space-y-4">
             <div className="space-y-2">
-              <Label>Pseudo</Label>
+              <Label>Prénom</Label>
               <Input
                 type="text"
-                placeholder="Votre pseudo"
+                placeholder="Votre prénom"
                 value={loginData.pseudo}
                 onChange={(e) => setLoginData({ ...loginData, pseudo: e.target.value })}
+                required
+              />
+            </div>
+            <div className="space-y-2">
+              <Label>Nom</Label>
+              <Input
+                type="text"
+                placeholder="Votre nom"
+                value={loginData.nom}
+                onChange={(e) => setLoginData({ ...loginData, nom: e.target.value })}
                 required
               />
             </div>
@@ -119,12 +129,22 @@ const AuthButtons = () => {
           </DialogHeader>
           <form onSubmit={handleSignup} className="space-y-4">
             <div className="space-y-2">
-              <Label>Pseudo</Label>
+              <Label>Prénom</Label>
               <Input
                 type="text"
-                placeholder="Choisissez votre pseudo"
+                placeholder="Votre prénom"
                 value={signupData.pseudo}
                 onChange={(e) => setSignupData({ ...signupData, pseudo: e.target.value })}
+                required
+              />
+            </div>
+            <div className="space-y-2">
+              <Label>Nom</Label>
+              <Input
+                type="text"
+                placeholder="Votre nom"
+                value={signupData.nom}
+                onChange={(e) => setSignupData({ ...signupData, nom: e.target.value })}
                 required
               />
             </div>

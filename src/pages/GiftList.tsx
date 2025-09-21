@@ -59,9 +59,9 @@ const GiftListPage = () => {
   // gifts filtrés + triés
   const filteredGifts = gifts
     .filter((gift) => {
-      if (filter === "reserved" && (!gift.reserve || gift.reserve.trim() === ""))
+      if (filter === "reserved" && (!gift.nom || gift.nom.trim() === ""))
         return false;
-      if (filter === "available" && gift.reserve && gift.reserve.trim() !== "")
+      if (filter === "available" && gift.nom && gift.nom.trim() !== "")
         return false;
       if (
         search &&
@@ -140,14 +140,14 @@ const GiftListPage = () => {
 
               <div className="bg-gradient-to-br from-girl-secondary to-girl-accent rounded-2xl p-6 text-center shadow-lg">
                 <div className="text-3xl font-bold text-girl-primary">
-                  {gifts.filter((g) => g.reserve && g.reserve.trim() !== "").length}
+                  {gifts.filter((g) => g.nom && g.nom.trim() !== "").length}
                 </div>
                 <div className="text-girl-primary/70">Réservés</div>
               </div>
 
               <div className="bg-gradient-to-br from-boy-secondary to-boy-accent rounded-2xl p-6 text-center shadow-lg">
                 <div className="text-3xl font-bold text-boy-primary">
-                  {gifts.filter((g) => !g.reserve || g.reserve.trim() === "").length}
+                  {gifts.filter((g) => !g.nom || g.nom.trim() === "").length}
                 </div>
                 <div className="text-boy-primary/70">Disponibles</div>
               </div>

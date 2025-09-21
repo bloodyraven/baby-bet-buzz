@@ -1,5 +1,6 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
+import { majPremiereLettre } from "@/utils/utils"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -37,16 +38,16 @@ const UserProfile = () => {
           <Avatar className="w-8 h-8">
             <AvatarImage src="" /> {/* Pas d'image pour l'instant */}
             <AvatarFallback className="bg-gradient-to-r from-girl-secondary to-boy-secondary text-primary-foreground text-sm font-semibold">
-              {getInitials(user.pseudo)}
+              {getInitials(user.pseudo+" "+user.nom)}
             </AvatarFallback>
           </Avatar>
           <div className="flex flex-col items-start">
             <div className="flex items-center gap-2">
-              <span className="font-semibold text-sm">{user.pseudo}</span>
+              <span className="font-semibold text-sm">{majPremiereLettre(user.pseudo)} {majPremiereLettre(user.nom)}</span>
               {user.admin && (
-                <Badge variant="secondary" className="hidden md:flex h-5 px-2 text-xs bg-gradient-to-r from-girl to-boy text-white">
-                  <Crown className="w-3 h-3 mr-1" />
-                  Admin
+                <Badge variant="secondary" className="h-5 px-2 text-xs bg-gradient-to-r from-girl to-boy text-white">
+                  <Crown className="w-3 h-3" />
+                  <span className="hidden md:flex ml-1">Admin</span>
                 </Badge>
               )}
             </div>
@@ -57,7 +58,7 @@ const UserProfile = () => {
       <DropdownMenuContent align="end" className="w-56">
         <DropdownMenuLabel className="font-normal">
           <div className="flex flex-col space-y-1">
-            <p className="text-sm font-medium leading-none">{user.pseudo}</p>
+            <p className="text-sm font-medium leading-none">{majPremiereLettre(user.pseudo)} {majPremiereLettre(user.nom)}</p>
             <p className="text-xs leading-none text-muted-foreground">
               {user.admin ? "Administrateur" : "Membre"}
             </p>

@@ -4,13 +4,14 @@ import { supabase } from "@/lib/supabaseClient";
 export interface User {
   id: string;
   pseudo: string;
+  nom: string;
   admin: boolean;
 }
 
 interface UserContextType {
   user: User | null;
-  login: (pseudo: string, code: string) => Promise<void>;
-  signup: (pseudo: string, code: string) => Promise<void>;
+  login: (pseudo: string, nom: string, code: string) => Promise<void>;
+  signup: (pseudo: string, nom: string, code: string) => Promise<void>;
   logout: () => void;
 }
 
@@ -24,17 +25,18 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
     if (saved) setUser(JSON.parse(saved));
   }, []);
 
-  const login = async (pseudo: string, code: string) => {
+  const login = async (pseudo: string, nom: string, code: string) => {
     const { data, error } = await supabase
       .from("users")
       .select("*")
       .ilike("pseudo", pseudo.toLowerCase())
+      .ilike("nom", nom.toLowerCase())
       .eq("code", code)
       .single();
 
     if (error || !data) throw new Error("Pseudo ou code incorrect");
 
-    const loggedUser: User = { id: data.id, pseudo: data.pseudo, admin: data.admin };
+    const loggedUser: User = { id: data.id, pseudo: data.pseudo, nom: data.nom, admin: data.admin };
     setUser(loggedUser);
     localStorage.setItem("users", JSON.stringify(loggedUser));
 
@@ -42,12 +44,13 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
     await supabase.from("users").update({ last_login: new Date() }).eq("id", data.id);
   };
 
-  const signup = async (pseudo: string, code: string) => {
+  const signup = async (pseudo: string, nom: string, code: string) => {
     // Vérifier si le pseudo existe déjà
     const { data: existingUser, error: selectError } = await supabase
       .from("users")
       .select("id")
       .ilike("pseudo", pseudo.toLowerCase())
+      .ilike("nom", nom.toLowerCase())
       .single();
 
     if (selectError && selectError.code !== "PGRST116") {
@@ -60,15 +63,16 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
     }
 
     const pseudoLower = pseudo.toLowerCase();
+    const nomLower = nom.toLowerCase();
     const { data, error } = await supabase
       .from("users")
-      .insert([{ pseudoLower, code, admin: false, last_login: new Date() }])
+      .insert([{ pseudoLower, nom, code, admin: false, last_login: new Date() }])
       .select()
       .single();
 
     if (error || !data) throw new Error("Impossible de créer le compte");
 
-    const newUser: User = { id: data.id, pseudo: data.pseudo, admin: data.admin };
+    const newUser: User = { id: data.id, pseudo: data.pseudo, nom: data.nom, admin: data.admin };
     setUser(newUser);
     localStorage.setItem("users", JSON.stringify(newUser));
   };

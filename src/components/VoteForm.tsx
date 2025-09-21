@@ -5,6 +5,7 @@ import { toast } from "sonner";
 import { useUser } from "@/context/UserContext";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { Vote } from "@/pages/Votes";
+import { majPremiereLettre } from "@/utils/utils";
 
 interface VoteFormProps {
   supabase: SupabaseClient;
@@ -23,7 +24,7 @@ export const VoteForm = ({ supabase, votes, setVotes, hasVoted }: VoteFormProps)
       setSelectedGender(null);
       return;
     }
-    const previousVote = votes.find(v => v.name === user.pseudo);
+    const previousVote = votes.find(v => v.nom === user.nom && v.prenom === user.pseudo);
     setSelectedGender(previousVote ? previousVote.gender : null);
   }, [user, votes]);
 
@@ -53,19 +54,19 @@ export const VoteForm = ({ supabase, votes, setVotes, hasVoted }: VoteFormProps)
     }
 
     // Supprimer le vote précédent si existant
-    const previousVote = votes.find(v => v.name === user.pseudo);
+    const previousVote = votes.find(v => v.nom === user.nom && v.prenom === user.pseudo);
     if (previousVote) {
       await supabase.from("vote").delete().eq("id", previousVote.id);
     }
 
     // Ajouter le nouveau vote
-    await supabase.from("vote").insert({ name: user.pseudo, gender: selectedGender });
+    await supabase.from("vote").insert({ nom: user.nom, prenom: user.pseudo, gender: selectedGender });
 
     if (hasVoted) {
       toast.success(`Votre vote a été modifié.`);
     } else {
       toast.success(
-        `Merci ${user.pseudo} ! Votre vote pour "${selectedGender === "girl" ? "Fille" : "Garçon"}" a été enregistré ! 🎉`
+        `Merci ${majPremiereLettre(user.pseudo)} ! Votre vote pour "${selectedGender === "girl" ? "Fille" : "Garçon"}" a été enregistré ! 🎉`
       );
     }
 

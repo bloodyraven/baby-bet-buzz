@@ -12,7 +12,8 @@ export interface GiftType {
   desc?: string;
   prix?: number;
   link?: string;
-  reserve?: string;
+  nom?: string;
+  prenom?: string;
 }
 
 interface GiftsListProps {
@@ -27,9 +28,9 @@ export const GiftsList = ({ gifts, supabase, setGifts }: GiftsListProps) => {
   const handleReserve = async (giftId: string) => {
     if (!user) return;
     try {
-      const { error } = await supabase.from("cadeau").update({ reserve: user.pseudo }).eq("id", giftId);
+      const { error } = await supabase.from("cadeau").update({ prenom: user.pseudo, nom: user.nom }).eq("id", giftId);
       if (error) throw error;
-      setGifts(prev => prev.map(g => (g.id === giftId ? { ...g, reserve: user.pseudo } : g)));
+      setGifts(prev => prev.map(g => (g.id === giftId ? { ...g, prenom: user.pseudo, nom: user.nom } : g)));
     } catch (err) {
       console.error(err);
       toast.error("Erreur lors de la réservation");
@@ -38,9 +39,9 @@ export const GiftsList = ({ gifts, supabase, setGifts }: GiftsListProps) => {
 
   const handleUnreserve = async (giftId: string) => {
     try {
-      const { error } = await supabase.from("cadeau").update({ reserve: null }).eq("id", giftId);
+      const { error } = await supabase.from("cadeau").update({ prenom: null, nom: null }).eq("id", giftId);
       if (error) throw error;
-      setGifts(prev => prev.map(g => (g.id === giftId ? { ...g, reserve: undefined } : g)));
+      setGifts(prev => prev.map(g => (g.id === giftId ? { ...g, prenom: null, nom: null } : g)));
     } catch (err) {
       console.error(err);
       toast.error("Erreur lors de l'annulation");
@@ -77,11 +78,11 @@ export const GiftsList = ({ gifts, supabase, setGifts }: GiftsListProps) => {
     <div className="grid gap-4">
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {gifts.map((gift) => (
-          <Card key={gift.id} className={`overflow-hidden transition-all duration-300 ${gift.reserve ? "bg-muted/50 opacity-75" : "bg-white/90 backdrop-blur-sm hover:shadow-lg"}`}>
+          <Card key={gift.id} className={`overflow-hidden transition-all duration-300 ${gift.nom ? "bg-muted/50 opacity-75" : "bg-white/90 backdrop-blur-sm hover:shadow-lg"}`}>
             <CardHeader className="pb-3">
               <CardTitle className="text-lg flex items-start justify-between gap-2">
-                <span className={gift.reserve ? "line-through text-muted-foreground" : ""}>{gift.titre}</span>
-                {gift.reserve && (
+                <span className={gift.nom ? "line-through text-muted-foreground" : ""}>{gift.titre}</span>
+                {gift.nom && (
                   <div className="bg-gradient-to-r from-girl-primary to-boy-primary text-black text-xs px-2 py-1 rounded-full">Réservé</div>
                 )}
               </CardTitle>
@@ -99,14 +100,14 @@ export const GiftsList = ({ gifts, supabase, setGifts }: GiftsListProps) => {
                 )}
               </div>
 
-              {gift.reserve ? (
+              {gift.nom ? (
                 <div className="space-y-2">
                   <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                    <UserIcon className="w-4 h-4" /> Réservé par {gift.reserve}
+                    <UserIcon className="w-4 h-4" /> Réservé par {gift.nom}
                   </div>
 
                   <div className="flex gap-2">
-                    {gift.reserve === user?.pseudo && (
+                    {gift.prenom === user?.pseudo && gift.nom === user?.nom && (
                       <Button variant="outline" size="sm" onClick={() => handleUnreserve(gift.id)} className="flex-1">
                         Annuler la réservation
                       </Button>

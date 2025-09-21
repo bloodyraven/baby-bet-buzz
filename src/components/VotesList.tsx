@@ -1,5 +1,6 @@
 import { Vote } from "@/pages/Votes";
 import { Clock, User } from "lucide-react";
+import { majPremiereLettre } from "@/utils/utils";
 
 interface VotesListProps {
   votes: Vote[];
@@ -41,7 +42,7 @@ export const VotesList = ({ votes, gender }: VotesListProps) => {
                 <User className="w-5 h-5" />
               </div>
               <div>
-                <p className="font-semibold text-foreground">{vote.name}</p>
+                <p className="font-semibold text-foreground">{majPremiereLettre(vote.prenom)} {majPremiereLettre(vote.nom)}</p>
                 <div className="flex items-center gap-1 text-sm text-muted-foreground">
                   <Clock className="w-3 h-3" />
                   {new Date(vote.created_at).toLocaleDateString("fr-FR", {

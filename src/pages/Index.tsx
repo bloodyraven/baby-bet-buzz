@@ -25,24 +25,24 @@ const Index = () => {
       description: "Découvrez notre liste de cadeaux soigneusement sélectionnés et réservez celui qui vous fait plaisir.",
       icon: Gift,
       href: "/cadeaux",
-      gradient: "from-primary to-primary-foreground",
-      bgGradient: "from-primary/10 to-primary/5"
+      gradient: "from-girl to-boy",
+      bgGradient: "from-girl-accent to-boy-accent"
     },
     {
       title: "Livre d'Or",
       description: "Partagez vos félicitations, conseils et messages d'amour pour cette nouvelle aventure.",
       icon: BookOpen,
       href: "/livre-or",
-      gradient: "from-girl-primary to-primary",
-      bgGradient: "from-girl-accent/30 to-primary/10"
+      gradient: "from-girl to-boy",
+      bgGradient: "from-girl-accent to-boy-accent"
     },
     {
       title: "Galerie Photo",
       description: "Revivez les moments magiques de cette grossesse à travers notre collection de photos.",
       icon: Camera,
       href: "/galerie",
-      gradient: "from-muted-foreground to-foreground",
-      bgGradient: "from-muted/10 to-muted/5"
+      gradient: "from-girl to-boy",
+      bgGradient: "from-girl-accent to-boy-accent"
     }
   ];
 

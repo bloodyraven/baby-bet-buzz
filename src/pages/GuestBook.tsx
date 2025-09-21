@@ -11,11 +11,13 @@ import { useUser } from "@/context/UserContext";
 import { supabase } from "@/lib/supabaseClient";
 import { toast } from "sonner";
 import { MessageCircle, Trash2 } from "lucide-react";
+import { majPremiereLettre } from "@/utils/utils";
 
 interface GuestBookEntry {
   id: string;
   created_at: string;
-  name: string;
+  nom: string;
+  prenom: string;
   message: string;
   is_private: boolean;
 }
@@ -48,7 +50,7 @@ const GuestBook = () => {
     } else if (data) {
       setEntries(data);
       if (user) {
-        const existing = data.find((entry) => entry.name === user.pseudo);
+        const existing = data.find((entry) => entry.nom === user.nom && entry.prenom === user.pseudo);
         if (existing) {
           setEditingEntry(existing);
           setNewMessage(existing.message);
@@ -93,7 +95,8 @@ const GuestBook = () => {
         .from("guest_book")
         .insert([
           {
-            name: user.pseudo,
+            nom: user.nom,
+            prenom: user.pseudo,
             message: newMessage.trim(),
             is_private: isPrivate,
           },
@@ -143,7 +146,8 @@ const GuestBook = () => {
       const lower = search.toLowerCase();
       result = result.filter(
         (e) =>
-          e.name.toLowerCase().includes(lower) ||
+          e.nom.toLowerCase().includes(lower) ||
+          e.prenom.toLowerCase().includes(lower) ||
           e.message.toLowerCase().includes(lower)
       );
     }
@@ -267,7 +271,7 @@ const GuestBook = () => {
             filteredEntries.map((entry) => {
               const canView =
                 !entry.is_private ||
-                (user && (user.admin || user.pseudo === entry.name));
+                (user && (user.admin || user.pseudo === entry.prenom || user.nom === entry.nom));
 
               if (!canView) return null;
 
@@ -280,9 +284,9 @@ const GuestBook = () => {
                     <div className="flex justify-between items-center mb-2">
                       <div className="flex items-center gap-2">
                         <div className="w-8 h-8 rounded-full bg-gradient-to-r from-girl-secondary to-boy-secondary flex items-center justify-center text-primary-foreground font-semibold text-sm">
-                          {entry.name.charAt(0).toUpperCase()}
+                          {entry.prenom.charAt(0).toUpperCase()}{entry.nom.charAt(0).toUpperCase()}
                         </div>
-                        <span className="font-semibold">{entry.name}</span>
+                        <span className="font-semibold">{majPremiereLettre(entry.prenom)} {majPremiereLettre(entry.nom)}</span>
                         {entry.is_private && (
                           <span className="ml-2 text-xs text-muted-foreground italic">
                             (privé)
@@ -303,7 +307,7 @@ const GuestBook = () => {
                           )}
                         </span>
                         {user &&
-                          (user.admin || user.pseudo === entry.name) && (
+                          (user.admin || user.pseudo === entry.prenom || user.nom === entry.nom) && (
                             <button
                               onClick={() => handleDelete(entry.id)}
                               className="text-destructive hover:opacity-80"
