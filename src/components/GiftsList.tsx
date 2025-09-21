@@ -5,6 +5,7 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 import { useUser } from "@/context/UserContext";
 import { toast } from "sonner";
 import type { Dispatch, SetStateAction } from "react";
+import { majPremiereLettre } from "@/utils/utils";
 
 export interface GiftType {
   id: string;
@@ -103,7 +104,7 @@ export const GiftsList = ({ gifts, supabase, setGifts }: GiftsListProps) => {
               {gift.nom ? (
                 <div className="space-y-2">
                   <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                    <UserIcon className="w-4 h-4" /> Réservé par {gift.nom}
+                    <UserIcon className="w-4 h-4" /> Réservé par {majPremiereLettre(gift.prenom)} {majPremiereLettre(gift.nom)}
                   </div>
 
                   <div className="flex gap-2">
