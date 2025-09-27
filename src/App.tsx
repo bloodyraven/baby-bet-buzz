@@ -10,6 +10,7 @@ import GiftList from "./pages/GiftList";
 import GuestBook from "./pages/GuestBook";
 import Gallery from "./pages/Gallery";
 import NotFound from "./pages/NotFound";
+// import PredictionsDetails from "./pages/PredictionsDetails";
 import { UserProvider } from "@/context/UserContext";
 
 const queryClient = new QueryClient();
@@ -28,6 +29,7 @@ const App = () => (
           <Route path="/cadeaux" element={<GiftList />} />
           <Route path="/livre-or" element={<GuestBook />} />
           <Route path="/galerie" element={<Gallery />} />
+          {/* <Route path="/predictions-detaillees" element={<PredictionsDetails />} /> */}
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
