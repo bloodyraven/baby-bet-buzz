@@ -38,7 +38,7 @@ const AuthButtons = () => {
       return;
     }
     try {
-      await signup(signupData.pseudo, loginData.nom, signupData.code);
+      await signup(signupData.pseudo, signupData.nom, signupData.code);
       setIsSignupOpen(false);
       setSignupData({ pseudo: "", nom: "", code: "", confirmCode: "" });
     } catch (err: any) {

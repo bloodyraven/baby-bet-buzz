@@ -66,7 +66,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
     const nomLower = nom.toLowerCase();
     const { data, error } = await supabase
       .from("users")
-      .insert([{ pseudoLower, nom, code, admin: false, last_login: new Date() }])
+      .insert([{ pseudo:pseudoLower, nom:nomLower, code:code, admin: false, last_login: new Date() }])
       .select()
       .single();
 
